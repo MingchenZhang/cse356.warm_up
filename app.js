@@ -49,7 +49,7 @@ if (Cluster.isMaster) {
 	// start up server
 	var httpPort = process.env.HTTP_PORT || 3000;
 	app.listen(httpPort, function () {
-		console.log(('app (' + process.pid + ') is listening on port ' + httpPort).green);
+		console.log(('app (' + process.pid + ') is listening on port ' + httpPort));
 	});
 }
 

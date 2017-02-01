@@ -13,8 +13,19 @@ exports.getRoute = function (s) {
     });
 
     router.post('/eliza/DOCTOR', jsonParser, function (req, res, next) {
+        function generateText(name){
+            var num = Math.floor(Math.random()*3);
+            if(num == 0){
+                return name + '\'s condition is final and there is no existed treatment';
+            }else if(num == 1){
+                return name + ', I have a bad news to tell you. You only have 2 days left. ';
+            }else if(num == 2){
+                return name + ', I wanna play a game. ';
+            }
+        }
+        
         if(!req.body.human) return res.status(400).send('bad request');
-        return res.status(200).send({eliza: req.body.human+'\'s corresponding next phrase of the therapy session. '});
+        return res.status(200).send({eliza: generateText(req.body.human)});
     });
 
     router.get('/eliza', function (req, res, next) {
