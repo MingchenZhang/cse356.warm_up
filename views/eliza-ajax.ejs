@@ -22,7 +22,9 @@
             dataType: 'json'
         }).done(function (result) {
             var area = $("#result-area");
-            area.val( area.val() + "\n" + result.eliza);
+            area.val( area.val() + "\nEliza: " + result.eliza);
+            if(area.length)
+                area.scrollTop(area[0].scrollHeight - area.height());
         }).fail(function (err) {
             console.error(err);
         });
