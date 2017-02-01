@@ -1,0 +1,28 @@
+<html>
+<body>
+<form>
+    <input type="text" name="name" id="name-text">
+    <button type="button" id="submit-btn">submit</button>
+    <p id="result-field"></p>
+</form>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+    $('#submit-btn').click(function () {
+        var res = $('#result-field');
+        res.empty();
+        $.ajax({
+            url: '/eliza/DOCTOR',
+            type: 'post',
+            data: JSON.stringify({human: $('#name-text').val()}),
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json'
+        }).done(function (result) {
+            res.html(result.eliza);
+        }).fail(function (err) {
+            console.error(err);
+            res.html(err);
+        });
+    });
+</script>
+</body>
+</html>
