@@ -3,3 +3,7 @@ body{
 	margin: 0;
 	background: #80bfff;
 }
+textarea{
+	margin: 10px 0px 0px 0px;
+	width: 450px;
+}
