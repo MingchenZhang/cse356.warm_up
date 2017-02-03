@@ -25,7 +25,7 @@ exports.getRoute = function (s) {
         }
         
         if(!req.body.human) return res.status(400).send('bad request');
-        return res.status(200).send({eliza: generateText(req.body.human)});
+        return res.status(200).send({eliza: generateText(req.body.human)+"(id="+Math.floor(Math.random()*9999)+")"});
     });
 
     router.get('/eliza', function (req, res, next) {
