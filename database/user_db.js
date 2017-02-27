@@ -14,6 +14,7 @@ exports.initDatabase = function (singleton, readyList) {
     var userDBPath = s.dbPath + 'eliza_user_info';
     var userDBReady = When.defer();
     readyList.push(userDBReady.promise);
+    console.log('try to connect to '+userDBPath);
     s.mongodb.MongoClient.connect(userDBPath, function (err, db) {
         function ready(db, err, result) {
             if (err) {
@@ -46,6 +47,7 @@ exports.initDatabase = function (singleton, readyList) {
     var loginDBPath = s.dbPath + 'eliza_login_session';
     var loginDBReady = When.defer();
     readyList.push(loginDBReady.promise);
+    console.log('try to connect to '+loginDBPath);
     s.mongodb.MongoClient.connect(loginDBPath, function (err, db) {
         function ready(db, err, result) {
             if (err) {

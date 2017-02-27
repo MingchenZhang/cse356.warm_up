@@ -13,6 +13,7 @@ exports.initDatabase = function (singleton, readyList) {
     var convDBPath = s.dbPath + 'eliza_user_conv';
     var convDBReady = When.defer();
     readyList.push(convDBReady.promise);
+    console.log('try to connect to '+convDBPath);
     s.mongodb.MongoClient.connect(convDBPath, function (err, db) {
         function ready(db, err, result) {
             if (err) {
