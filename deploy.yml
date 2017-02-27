@@ -10,7 +10,7 @@
     systemd_config_nodejs: |
         [Unit]
         Description=simple nodejs server
-        Requires=simple_mongodb_server
+        Requires=simple_mongodb_server.service
 
         [Service]
         User=root
@@ -99,8 +99,8 @@
   - name: enable the service
     command: systemctl enable simple_mongodb_server.service
   
-  - name: start the service
-    command: systemctl start simple_nodejs_server.service
+  - name: start the nodejs service
+    command: systemctl restart simple_nodejs_server.service
   
   - name: pause 5 seconds
     pause:
