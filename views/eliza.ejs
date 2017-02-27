@@ -25,7 +25,7 @@
         $.ajax({
             url: '/eliza/DOCTOR',
             type: 'post',
-            data: JSON.stringify({human: $('#name-text').val()}),
+            data: JSON.stringify({name: '',human: $('#name-text').val()}),
             contentType: "application/json; charset=utf-8",
             dataType: 'json'
         }).done(function (result) {

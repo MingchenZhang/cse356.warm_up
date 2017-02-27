@@ -15,6 +15,7 @@
     "mongodb": "^2.2.19",
     "nodemailer": "^2.7.0",
     "randomstring": "^1.1.5",
-    "when": "^3.7.7"
+    "when": "^3.7.7",
+    "ejs": "latest"
   }
 }
