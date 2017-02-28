@@ -2,15 +2,50 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>warm-up project#1</title>
+	<title>warm-up project#2</title>
 	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
 </head>
+
+
 <body>
+
+
 <form action="/eliza" method="post">
     <label>Name: </label>
 	<input type="text" name="name">
 	<button type="submit">submit</button>
 </form>
+
+<form id="adduser-form">
+    <h1>Add User</h1>
+    <label>Username: </label>
+    <input type="text" name="username">
+    <label>Password: </label>
+    <input type="password" name="password">
+    <label>Email: </label>
+    <input type="text" name="email">
+    <button type="button" id="adduser-btn">submit</button>
+</form>
+
+<form id="verify-form">
+    <h1>Verify</h1>
+    <label>Email: </label>
+    <input type="text" name="email">
+    <label>Key: </label>
+    <input type="password" name="key">
+    <button type="button" id="verify-btn">submit</button>
+</form>
+
+<form id="login-form">
+    <h1>Login</h1>
+    <label>Username: </label>
+    <input type="text" name="username">
+    <label>Password: </label>
+    <input type="password" name="password">
+    <button type="button" id="login-btn">submit</button>
+</form>
+<button type="button" id="logout-btn">Logout</button>
+
 <% if(typeof name !== 'undefined' ) { %>
 <h2>Hello <%=name%>, <%=date%></h2>
 <form>
@@ -19,25 +54,14 @@
     <button type="button" id="submit-btn">submit</button><br>
     <textarea class="form-control" rows="10" id="result-area"></textarea>
 </form>
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script>
-    $('#submit-btn').click(function () {
-        $.ajax({
-            url: '/eliza/DOCTOR',
-            type: 'post',
-            data: JSON.stringify({name: '',human: $('#name-text').val()}),
-            contentType: "application/json; charset=utf-8",
-            dataType: 'json'
-        }).done(function (result) {
-            var area = $("#result-area");
-            area.val( area.val() + "\n\nEliza: " + result.eliza);
-            if(area.length)
-                area.scrollTop(area[0].scrollHeight - area.height());
-        }).fail(function (err) {
-            console.error(err);
-        });
-    });
-</script>
 <% } %>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<% if(typeof name !== 'undefined' ) { %>
+<script src="/static/javascript/script1.js"></script>
+<% } %>
+<script src="/static/javascript/script2.js"></script>
+
 </body>
 </html>
