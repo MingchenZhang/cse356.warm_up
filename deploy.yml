@@ -40,10 +40,10 @@
     raw: sudo apt-get update && sudo apt-get -y install python-simplejson
 
   tasks:
-  - name: ensure git is installed
-    apt:
-      name: git
-      update_cache: yes
+#  - name: ensure git is installed
+#    apt:
+#      name: git
+#      update_cache: yes
   - name: ensure systemd is installed
     apt:
       name: systemd
@@ -73,11 +73,15 @@
   
   - name: create folder for website resources
     file: 
-      path: /var/node
+      path: /var/node/{{project_name}}/
       state: directory
-  - name: get website resources
-    git:
-      repo: "{{nodejs_git}}"
+      recurse: yes
+  - name: archive all file in git
+    local_action: shell git archive HEAD > archive.tar.gz
+    become: false
+  - name: unarchive files
+    unarchive:
+      src: archive.tar.gz
       dest: /var/node/{{project_name}}/
       
   - name: create folder for mongodb
