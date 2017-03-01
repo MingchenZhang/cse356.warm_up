@@ -10,11 +10,11 @@ exports.getRoute = function (s) {
 
     router.post('/adduser', jsonParser, function (req, res, next) {
         if(!s.tools.isAllString(req.body))
-            return res.status(400).send({error: 'format error'});
+            return res.status(400).send({status: 'ERROR', error: 'format error'});
         
         s.userConn.createUser({email: req.body.email, username:req.body.username, password: req.body.password})
             .then(function (result) {
-                return res.status(200).send({success: 'account created'});
+                return res.status(200).send({status: 'OK', success: 'account created'});
             })
             .catch(function (err) {
                 return res.status(400).send(err);
@@ -32,7 +32,7 @@ exports.getRoute = function (s) {
 
     router.post('/verify', jsonParser, function (req, res, next) {
         if(!s.tools.isAllString(req.query))
-            return res.status(400).send({error: 'format error'});
+            return res.status(400).send({status: 'ERROR', error: 'format error'});
         
         var promise = null;
         if(req.body.key == 'abracadabra'){
@@ -42,7 +42,7 @@ exports.getRoute = function (s) {
         }
         
         promise.then(function (result) {
-            return res.status(200).send({success: 'account verified'});
+            return res.status(200).send({status: 'OK', success: 'account verified'});
         }).catch(function (err) {
             return res.status(400).send(err);
         });
@@ -50,13 +50,13 @@ exports.getRoute = function (s) {
 
     router.post('/login', jsonParser, function (req, res, next) {
         if(!s.tools.isAllString(req.query))
-            return res.status(400).send({error: 'format error'});
+            return res.status(400).send({status: 'ERROR', error: 'format error'});
         
         s.userConn.userLogin({username: req.body.username, password: req.body.password})
             .then(function (session) {
                 res.cookie('login_session', session.sessionToken,
                     {httpOnly: true, secure: !!s.inProduction, expires: (new Date(Date.now() + 180*24*3600*1000))});
-                return res.status(200).send({success: 'logged in'});
+                return res.status(200).send({status: 'OK', success: 'logged in'});
             })
             .catch(function (err) {
                 return res.status(400).send(err);
@@ -67,7 +67,7 @@ exports.getRoute = function (s) {
         s.userConn.logoutSession({sessionToken: req.userLoginInfo.sessionToken})
             .then(function (result) {
                 res.clearCookie('login_session');
-                return res.status(200).send({success: 'logged out'});
+                return res.status(200).send({status: 'OK', success: 'logged out'});
             })
             .catch(function (err) {
                 return res.status(400).send(err);

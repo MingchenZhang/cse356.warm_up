@@ -164,7 +164,7 @@ exports.emailVerify = function (param) {
 
     function paramCheck(){
         return new When.promise(function (resolve, reject) {
-            if (typeof token !== 'string') return reject({error: 'format error'});
+            if (typeof token !== 'string') return reject({status: 'ERROR', error: 'format error'});
             else return resolve();
         });
     }
@@ -172,8 +172,8 @@ exports.emailVerify = function (param) {
     function getUserID(value) {
         return new When.promise(function (resolve, reject) {
             userDB.userEmailVeriColl.findOne({validationToken: token}, function (err, result) { // NOTE: findOne will not produce an err if it does not found
-                if(err) reject({error: 'database error'});
-                else if (!result) reject({error: 'token not found'});
+                if(err) reject({status: 'ERROR', error: 'database error'});
+                else if (!result) reject({status: 'ERROR', error: 'token not found'});
                 else resolve(result.userID);
             });
         });
@@ -185,7 +185,7 @@ exports.emailVerify = function (param) {
                 _id: userID
             }, {_id: 1}, {$set: {emailVerified: true}}, function (err, result) {
                 if (result.lastErrorObject.n == 0) {
-                    reject({error: 'user not found'});
+                    reject({status: 'ERROR', error: 'user not found'});
                 } else {
                     resolve(result.value);
                 }
@@ -201,7 +201,7 @@ exports.emailVerify = function (param) {
 exports.emailVerifyDirectly = function (param) {
     var email = param.email;
     
-    if(typeof email != 'string') return When.reject({error: 'format error'});
+    if(typeof email != 'string') return When.reject({status: 'ERROR', error: 'format error'});
     
     function verifyEmail(userID) {
         return new When.promise(function (resolve, reject) {
@@ -209,7 +209,7 @@ exports.emailVerifyDirectly = function (param) {
                 email: email
             }, {_id: 1}, {$set: {emailVerified: true}}, function (err, result) {
                 if (result.lastErrorObject.n == 0) {
-                    reject({error: 'user not found'});
+                    reject({status: 'ERROR', error: 'user not found'});
                 } else {
                     resolve(result.value);
                 }
@@ -227,9 +227,9 @@ exports.userLogin = function (param) {
     function paramCheck(){
         return new When.promise(function (resolve, reject) {
             if (typeof username !== 'string')
-                return reject({error: 'format error'});
+                return reject({status: 'ERROR', error: 'format error'});
             if (typeof password !== 'string')
-                return reject({error: 'format error'});
+                return reject({status: 'ERROR', error: 'format error'});
             else return resolve();
         });
     }
@@ -238,10 +238,10 @@ exports.userLogin = function (param) {
         return new When.promise(function (resolve, reject) {
             userDB.userBasicColl.findOne({username: username}, function (err, result) {
                 if(!err && result !== null) {
-                    if(!result.emailVerified) return reject({error: 'email not verified'});
+                    if(!result.emailVerified) return reject({status: 'ERROR', error: 'email not verified'});
                     return resolve(result);
                 }
-                else return reject({error: 'account not found'});
+                else return reject({status: 'ERROR', error: 'account not found'});
             });
         });
     }
@@ -250,7 +250,7 @@ exports.userLogin = function (param) {
         return new When.promise(function (resolve, reject) {
             var userGivenHP = calculateHashedPassword(password, userBasic.passwordSalt);
             if(userGivenHP === userBasic.hashedPassword) return resolve(userBasic);
-            else return reject({error: 'password incorrect'});
+            else return reject({status: 'ERROR', error: 'password incorrect'});
         });
     }
     
@@ -290,7 +290,7 @@ exports.logoutSession = (param)=>{
                 null,
                 {remove: true, w: 1},
                 function (err, result) {
-                    if(err) return reject({error: 'database error'});
+                    if(err) return reject({status: 'ERROR', error: 'database error'});
                     return resolve();
                 });
         });
@@ -307,12 +307,12 @@ exports.getSession = (param) => {
             login.sessionColl.findOne({sessionToken: sessionToken}, function (err, result) {
                 if (err) {
                     console.error(err);
-                    reject({error: 'database error'})
+                    reject({status: 'ERROR', error: 'database error'})
                 }
                 if (result !== null) {
                     return resolve(result);
                 }
-                else return reject({error: 'session not found'});
+                else return reject({status: 'ERROR', error: 'session not found'});
             });
         });
     }
