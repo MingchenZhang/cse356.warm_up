@@ -38,7 +38,7 @@ exports.getRoute = function (s) {
         if(req.body.key == 'abracadabra'){
             promise = s.userConn.emailVerifyDirectly({email: req.body.email});
         }else{
-            promise = s.userConn.verifyEmail({token: req.body.key});
+            promise = s.userConn.emailVerify({token: req.body.key});
         }
         
         promise.then(function (result) {

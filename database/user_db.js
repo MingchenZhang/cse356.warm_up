@@ -99,15 +99,13 @@ exports.createUser = function(param){
     }
 
     function usernameNotExist() {
-        return function (value) {
-            return new When.promise(function (resolve, reject) {
-                userDB.userBasicColl.findOne({username: username}, function (err, result) {
-                    if(err) return reject({error: 'database error'});
-                    if (result === null) resolve();
-                    else reject({error: 'username existed'});
-                });
+        return new When.promise(function (resolve, reject) {
+            userDB.userBasicColl.findOne({username: username, emailVerified:true}, function (err, result) {
+                if(err) return reject({error: 'database error'});
+                if (result === null) resolve();
+                else reject({error: 'username existed'});
             });
-        };
+        });
     }
 
     function createUser() {
@@ -122,7 +120,7 @@ exports.createUser = function(param){
             userDoc.hashedPassword = calculateHashedPassword(password, userDoc.passwordSalt);
             userDoc.emailVerified = emailVerified;
             userDoc.createdAt = new Date();
-            userDB.userBasicColl.findAndModify({email: email}, [['email', 1]], userDoc, {
+            userDB.userBasicColl.findAndModify({username: username}, [['email', 1]], userDoc, {
                 upsert: true,
                 w: 1,
                 new: true

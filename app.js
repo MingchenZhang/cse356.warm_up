@@ -47,21 +47,22 @@ if (Cluster.isMaster) {
 
     // process static request directly
     app.use('/static', Express.static(__dirname + '/static'));
-    
+
     // cookie parser
     app.use(CookieParser());
-    
+
     // reinitialize ejs variable
     // LOADER: ejs include record
     app.use((req, res, next) => {
         res.locals = {
             LOADER:{},
             loginToHome: false
-        }; next();
+        };
+        next();
     });
-    
+
     // Add user login session lookup
-    app.use(function (req, res, next) {
+    app.use((req, res, next) => {
         req.userLoginInfo = null;
         res.locals.userLoginInfo = null;
         if(typeof req.cookies.login_session == 'string'){
@@ -91,7 +92,7 @@ if (Cluster.isMaster) {
         console.error(err.stack);
         res.status(500).send('server error');
     });
-	
+
 	// start up server
     When.all(startupPromises).then(function () {
         var httpPort = process.env.HTTP_PORT || 3000;
