@@ -44,9 +44,9 @@ exports.addConversation = function (param) {
     var sender = param.sender;
     var text = param.text;
     
-    if(typeof sessionToken != 'string') return When.reject({error: 'session not recognized'});
+    if(typeof sessionToken != 'string') return When.reject({status:"ERROR", error: 'session not recognized'});
     if(typeof sender != 'string') sender = 'undefined';
-    if(typeof text != 'string') return When.reject({error: 'text not recognized'});
+    if(typeof text != 'string') return When.reject({status:"ERROR", error: 'text not recognized'});
     
     function addConv(value) {
         return new When.promise(function (resolve, reject) {
@@ -92,12 +92,12 @@ exports.addConversation = function (param) {
 exports.listConversation = function (param) {
     var sessionToken = param.sessionToken;
     
-    if(typeof sessionToken != 'string') return When.reject({error: 'session not recognized'});
+    if(typeof sessionToken != 'string') return When.reject({status:"ERROR", error: 'session not recognized'});
     
     function list(value) {
         return new When.promise(function (resolve, reject) {
             convDB.sessionColl.find().toArray(function (err, docs) {
-                if(err) return reject({error: 'database error'});
+                if(err) return reject({status:"ERROR", error: 'database error'});
                 var results = [];
                 docs.forEach(function(doc){
                     results.push({id:doc.sessionToken, start_date:doc._id.getTimestamp().toISOString()});
@@ -113,12 +113,12 @@ exports.listConversation = function (param) {
 exports.showConversation = function (param) {
     var id = param.id;
     
-    if(typeof id != 'string') return When.reject({error: 'id not recognized'});
+    if(typeof id != 'string') return When.reject({status:"ERROR", error: 'id not recognized'});
     
     function list(value) {
         return new When.promise(function (resolve, reject) {
             convDB.convColl.find({sessionToken: id}).sort(['createdAt', 1]).toArray(function (err, docs) {
-                if (err) return reject({error: 'database error'});
+                if (err) return reject({status:"ERROR", error: 'database error'});
                 var results = [];
                 docs.forEach(function (doc) {
                     results.push({timestamp: doc.createdAt, name: doc.sender, text: doc.text});
