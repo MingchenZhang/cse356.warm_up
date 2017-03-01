@@ -90,9 +90,9 @@ exports.createUser = function(param){
         return new When.promise(function (resolve, reject) {
             if (typeof email !== 'string' || email.match('^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$') === null)
                 reject({error: 'email format error'});
-            else if (typeof password !== 'string' || password.match('^.{4,}$') === null)
+            else if (typeof password !== 'string')// || password.match('^.{4,}$') === null
                 reject({error: 'password format error'});
-            else if (typeof username !== 'string' || username.match('^.{4,}$') === null)
+            else if (typeof username !== 'string')// || username.match('^.{4,}$') === null
                 reject({error: 'username format error'});
             else resolve();
         });
