@@ -32,6 +32,7 @@ input[type=text]:focus,input[type=password]:focus{
 textarea{
 	margin: 10px 0px 0px 0px;
 	width: 450px;
+	height: 300px;
 }
 ul.tabs{
 	background: #faedea;

@@ -5,9 +5,12 @@ $('#adduser-btn').click(function () {
         type: 'post',
         data: JSON.stringify({username: $("#adduser-form input[name='username']").val(),password: $("#adduser-form input[name='password']").val(), email: $("#adduser-form input[name='email']").val()}),
         contentType: "application/json; charset=utf-8",
-        dataType: 'json'
+        dataType: 'json',
+        error: function (data) {
+            createAlert(data);
+        }
     }).done(function (result) {
-        //window.alert(result.success);
+        Materialize.toast(result.success, 2500, "green");
     }).fail(function (err) {
         console.error(err);
     });
@@ -21,7 +24,7 @@ $('#verify-btn').click(function () {
         contentType: "application/json; charset=utf-8",
         dataType: 'json'
     }).done(function (result) {
-        //window.alert(result.success);
+        Materialize.toast(result.success, 2500, "green");
     }).fail(function (err) {
         console.error(err);
     });
@@ -33,11 +36,13 @@ $('#login-btn').click(function () {
         type: 'post',
         data: JSON.stringify({username: $("#login-form input[name='username']").val(),password: $("#login-form input[name='password']").val()}),
         contentType: "application/json; charset=utf-8",
-        dataType: 'json'
+        dataType: 'json',
+        error: function (data) {
+            createAlert(data);
+        }
     }).done(function (result) {
         $("#section1").hide();
         $("#user-form").show();
-        //window.alert(result.success);
     }).fail(function (err) {
         console.error(err);
     });
@@ -53,7 +58,6 @@ $('#logout-btn').click(function () {
     }).done(function (result) {
         $("#section1").show();
         $("#user-form").hide();
-        //window.alert(result.success);
     }).fail(function (err) {
         console.error(err);
     });
@@ -68,13 +72,18 @@ $('#submit-btn2').click(function () {
         dataType: 'json'
     }).done(function (result) {
         var area = $("#result-area2");
-        area.val( area.val() + "\n\nEliza: " + result.eliza);
+        area.val( area.val() + "Eliza: " + result.eliza + "\n\n");
         if(area.length)
             area.scrollTop(area[0].scrollHeight - area.height());
     }).fail(function (err) {
         console.error(err);
     });
 });
+
+function createAlert(data){
+    var temp = JSON.parse(data.responseText);
+    Materialize.toast(temp.error, 2500, "red");
+}
 
 function listconv(){
     

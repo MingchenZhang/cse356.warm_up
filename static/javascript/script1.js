@@ -7,7 +7,7 @@ $('#submit-btn').click(function () {
         dataType: 'json'
     }).done(function (result) {
         var area = $("#result-area");
-        area.val( area.val() + "\n\nEliza: " + result.eliza);
+        area.val( area.val() + "Eliza: " + result.eliza + "\n\n");
         if(area.length)
             area.scrollTop(area[0].scrollHeight - area.height());
     }).fail(function (err) {
