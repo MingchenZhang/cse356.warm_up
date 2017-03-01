@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Eliza</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+<body>
+<center>
+<div id="eliza-name">Eliza</div>
+<% if(typeof key !== 'undefined' && typeof email !== 'undefined') { %>
+<div>Email:</div>
+<div id="email"><%=email%></div>
+<div>Key:</div>
+<div id="key"><%=key%></div>
+<div>Status:</div>
+<div id="status"></div>
+<% } %>
+</center>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+<% if(typeof key !== 'undefined' && typeof email !== 'undefined') { %>
+<script src="/static/javascript/script3.js"></script>
+<% } %>
+</body>
+</html>

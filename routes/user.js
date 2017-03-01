@@ -21,6 +21,15 @@ exports.getRoute = function (s) {
             });
     });
 
+    router.get('/verify', urlParser, function (req, res, next) {
+        if(!req.query.email && !req.query.key) return res.status(400).send('bad request');
+        //check if email and key are valid!!!!!!!!!!!
+        res.render('verify', {
+            email: req.query.email,
+            key: req.query.key,
+        });
+    });
+
     router.post('/verify', jsonParser, function (req, res, next) {
         if(!s.tools.isAllString(req.query))
             return res.status(400).send({error: 'format error'});
