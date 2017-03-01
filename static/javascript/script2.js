@@ -1,4 +1,4 @@
-$("#logout-btn").hide();
+$("#user-form").hide();
 $('#adduser-btn').click(function () {
     $.ajax({
         url: '/adduser',
@@ -35,10 +35,8 @@ $('#login-btn').click(function () {
         contentType: "application/json; charset=utf-8",
         dataType: 'json'
     }).done(function (result) {
-        $("#verify-form").hide();
-        $("#adduser-form").hide();
-        $("#login-form").hide();
-        $("#logout-btn").show();
+        $("#section1").hide();
+        $("#user-form").show();
         //window.alert(result.success);
     }).fail(function (err) {
         console.error(err);
@@ -53,16 +51,30 @@ $('#logout-btn').click(function () {
         contentType: "application/json; charset=utf-8",
         dataType: 'json'
     }).done(function (result) {
-        $("#verify-form").show();
-        $("#adduser-form").show();
-        $("#login-form").show();
-        $("#logout-btn").hide();
+        $("#section1").show();
+        $("#user-form").hide();
         //window.alert(result.success);
     }).fail(function (err) {
         console.error(err);
     });
 });
 
+$('#submit-btn2').click(function () {
+    $.ajax({
+        url: '/eliza/DOCTOR',
+        type: 'post',
+        data: JSON.stringify({name: '',human: $('#name-text2').val()}),
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json'
+    }).done(function (result) {
+        var area = $("#result-area2");
+        area.val( area.val() + "\n\nEliza: " + result.eliza);
+        if(area.length)
+            area.scrollTop(area[0].scrollHeight - area.height());
+    }).fail(function (err) {
+        console.error(err);
+    });
+});
 
 function listconv(){
     

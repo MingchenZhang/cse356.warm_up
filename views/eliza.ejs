@@ -2,65 +2,92 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>warm-up project#2</title>
-	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+	<title>Eliza</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 </head>
 
 
 <body>
 
+<center>
+<div id="eliza-name">Eliza</div>
+<section id="section1">
+<ul class="tabs">
+<li class="tab"><a href="#demo-tab" class="active">Demo</a></li>
+<li class="tab"><a href="#adduser-form">Add User</a></li>
+<li class="tab"><a href="#verify-form">Verify</a></li>
+<li class="tab"><a href="#login-form">Login</a></li>
+</ul>
 
+<div id="demo-tab">
 <form action="/eliza" method="post">
-    <label>Name: </label>
-	<input type="text" name="name">
-	<button type="submit">submit</button>
+    <table>
+    <tr><td>Name: </td>
+        <td><input type="text" name="name"></td>
+        <td><button class="btn red" type="submit">Submit</button></td></tr>
+    </table>
 </form>
-
-<form id="adduser-form">
-    <h1>Add User</h1>
-    <label>Username: </label>
-    <input type="text" name="username">
-    <label>Password: </label>
-    <input type="password" name="password">
-    <label>Email: </label>
-    <input type="text" name="email">
-    <button type="button" id="adduser-btn">submit</button>
-</form>
-
-<form id="verify-form">
-    <h1>Verify</h1>
-    <label>Email: </label>
-    <input type="text" name="email">
-    <label>Key: </label>
-    <input type="password" name="key">
-    <button type="button" id="verify-btn">submit</button>
-</form>
-
-<form id="login-form">
-    <h1>Login</h1>
-    <label>Username: </label>
-    <input type="text" name="username">
-    <label>Password: </label>
-    <input type="password" name="password">
-    <button type="button" id="login-btn">submit</button>
-</form>
-<button type="button" id="logout-btn">Logout</button>
-
 <% if(typeof name !== 'undefined' ) { %>
-<h2>Hello <%=name%>, <%=date%></h2>
+<div>Hello <%=name%>, <%=date%></div>
 <form>
-    <label>Human: </label>
-    <input type="text" name="name" id="name-text">
-    <button type="button" id="submit-btn">submit</button><br>
+    <table>
+    <tr><td>Human: </td>
+        <td><input type="text" name="name" id="name-text"></td>
+        <td><button class="btn red" type="button" id="submit-btn">Submit</button></td></tr>
+    </table>
     <textarea class="form-control" rows="10" id="result-area"></textarea>
 </form>
 <% } %>
+</div>
 
+<form id="adduser-form">
+    <table>
+    <tr><td>Username: </td><td><input type="text" name="username"></td></tr>
+    <tr><td>Password: </td><td><input type="password" name="password"></td></tr>
+    <tr><td>Email: </td><td><input type="text" name="email"></td></tr>
+    </table>
+    <button class="btn red" type="button" id="adduser-btn">Submit</button>
+</form>
+
+<form id="verify-form">
+    <table>
+    <tr><td>Email: </td><td><input type="text" name="email"></td></tr>
+    <tr><td>Key: </td><td><input type="password" name="key"></td></tr>
+    </table>
+    <button class="btn red" type="button" id="verify-btn">Submit</button>
+</form>
+
+<form id="login-form">
+    <table>
+    <tr><td>Username: </td><td><input type="text" name="username"></td></tr>
+    <tr><td>Password: </td><td><input type="password" name="password"></td></tr>
+    </table>
+    <button class="btn red" type="button" id="login-btn">Submit</button>
+</form>
+</section>
+
+
+<form id="user-form">
+    <table>
+    <tr><td>Human: </td>
+        <td><input type="text" name="name" id="name-text2"></td></tr>
+    </table>
+    <div>
+        <button class="btn red" type="button" id="submit-btn2">Submit</button>
+        <button class="btn red" type="button" id="logout-btn">Logout</button>
+    </div>
+    <textarea class="form-control" rows="10" id="result-area2"></textarea>
+</form>
+
+</center>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <% if(typeof name !== 'undefined' ) { %>
 <script src="/static/javascript/script1.js"></script>
 <% } %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
 <script src="/static/javascript/script2.js"></script>
 
 </body>

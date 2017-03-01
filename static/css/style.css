@@ -1,9 +1,38 @@
-body{
+body,td,tr{
 	padding: 0;
 	margin: 0;
-	background: #80bfff;
+}
+body{
+	background: #faedea;
+}
+table{
+	width: 300px;
+}
+#demo-tab table{
+	width: 350px;
+}
+#demo-tab button{
+	margin-left: 7px;
+}
+button.btn{
+	font-size: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	height: 34px;
+}
+input[type=text]:focus,input[type=password]:focus{
+	border-bottom: 1px solid red !important;
+    box-shadow: 0 1px 0 0 red !important;
+}
+#eliza-name{
+	font-family: 'Fira Sans';
+	font-size: 60px;
+	font-weight: bold;
 }
 textarea{
 	margin: 10px 0px 0px 0px;
 	width: 450px;
+}
+ul.tabs{
+	background: #faedea;
 }
