@@ -1,3 +1,6 @@
+var Stringifier = require('stringifier');
+
+
 exports.getToolSet = function (s) {
     var tools = {};
 
@@ -7,6 +10,11 @@ exports.getToolSet = function (s) {
             if(typeof obj[key] !== 'string') return false;
         }
         return true;
+    };
+
+    tools.stringify = function(obj, param){
+        var maxDepth = param.maxDepth;
+        return Stringifier({maxDepth: maxDepth})(obj);
     };
 
     return tools;

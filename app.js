@@ -36,9 +36,16 @@ if (Cluster.isMaster) {
     s.userConn.initDatabase(s, startupPromises);
     s.convConn = require('./database/eliza_conv');
     s.convConn.initDatabase(s, startupPromises);
+    s.logConn = require('./database/logging');
+    s.logConn.initDatabase(s, startupPromises);
 
     // web server initialization
     var app = Express();
+
+    app.use((req, res, next)=>{
+        s.logConn.logRequest(req);
+        next();
+    });
 
     // secure with Helmet
     app.use(Helmet());
