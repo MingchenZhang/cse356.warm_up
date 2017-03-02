@@ -43,6 +43,7 @@ exports.addConversation = function (param) {
     var sessionToken = param.sessionToken;
     var sender = param.sender;
     var text = param.text;
+    var userID = param.userID;
     
     if(typeof sessionToken != 'string') return When.reject({status:"ERROR", error: 'session not recognized'});
     if(typeof sender != 'string') sender = 'undefined';
@@ -71,10 +72,11 @@ exports.addConversation = function (param) {
             var convDoc = {
                 createdAt: new Date(),
                 sessionToken: sessionToken,
+                userID: userID,
             };
             convDB.sessionColl.findOneAndUpdate(
                 {sessionToken:sessionToken},
-                {$set: {sessionToken:sessionToken}},
+                {$set: convDoc},
                 {upsert:true},
                 function (err, result) {
                 if (!err) {
@@ -91,12 +93,13 @@ exports.addConversation = function (param) {
 
 exports.listConversation = function (param) {
     var sessionToken = param.sessionToken;
+    var userID = param.userID;
     
     if(typeof sessionToken != 'string') return When.reject({status:"ERROR", error: 'session not recognized'});
     
     function list(value) {
         return new When.promise(function (resolve, reject) {
-            convDB.sessionColl.find().toArray(function (err, docs) {
+            convDB.sessionColl.find({userID: userID}).toArray(function (err, docs) {
                 if(err) return reject({status:"ERROR", error: 'database error'});
                 var results = [];
                 docs.forEach(function(doc){

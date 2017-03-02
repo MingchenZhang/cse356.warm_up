@@ -34,12 +34,14 @@ exports.getRoute = function (s) {
         s.convConn.addConversation({
             sessionToken:req.userLoginInfo.sessionToken,
             sender: req.body.name,
-            text: req.body.human
+            text: req.body.human,
+            userID: req.userLoginInfo.userID,
         }).then(()=>{
             return s.convConn.addConversation({
                 sessionToken:req.userLoginInfo.sessionToken,
                 sender: 'eliza',
-                text: response
+                text: response,
+                userID: req.userLoginInfo.userID,
             });
         }).then(()=>{
             return res.status(200).send(Object.assign({eliza: response}, {status:"OK"}));
@@ -63,7 +65,7 @@ exports.getRoute = function (s) {
     router.all('/listconv', jsonParser, function (req, res, next) {
         if(!req.userLoginInfo) return res.status(200).send({status: 'ERROR', error: 'bad request'});
         
-        s.convConn.listConversation({sessionToken: req.userLoginInfo.sessionToken})
+        s.convConn.listConversation({sessionToken: req.userLoginInfo.sessionToken, userID: req.userLoginInfo.userID})
             .then(function (result) {
                 return res.status(200).send(Object.assign(result, {status:"OK"}));
             }).catch(function (err) {
