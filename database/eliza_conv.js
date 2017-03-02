@@ -123,7 +123,7 @@ exports.showConversation = function (param) {
                 docs.forEach(function (doc) {
                     results.push({timestamp: doc.createdAt, name: doc.sender, text: doc.text});
                 });
-                resolve(results);
+                resolve({conversation:results});
             });
         });
     }
