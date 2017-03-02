@@ -102,7 +102,7 @@ exports.listConversation = function (param) {
                 docs.forEach(function(doc){
                     results.push({id:doc.sessionToken, start_date:doc._id.getTimestamp().toISOString()});
                 });
-                resolve({conversations:results});
+                resolve({conversation:results});
             });
         })
     }
