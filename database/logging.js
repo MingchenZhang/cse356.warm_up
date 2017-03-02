@@ -45,7 +45,7 @@ exports.logRequest = function(request){
         ip: request.ip,
         url: request.originalUrl,
         method: request.method,
-        body: body
+        body: request.body
     };
 
     loggingDB.requestsColl.insertOne(record);
