@@ -25,11 +25,11 @@ exports.getRoute = function (s) {
             }
         }
         
-        if(!req.body.human) return res.status(400).send('bad request');
+        if(!req.body.human) return res.status(200).send('bad request');
         
         var response = generateText(req.body.human)+"(id="+Math.floor(Math.random()*9999)+")";
 
-        if(!req.userLoginInfo) return res.status(400).send(Object.assign({eliza: response}, {status:"OK"}));
+        if(!req.userLoginInfo) return res.status(200).send(Object.assign({eliza: response}, {status:"OK"}));
 
         s.convConn.addConversation({
             sessionToken:req.userLoginInfo.sessionToken,
@@ -44,7 +44,7 @@ exports.getRoute = function (s) {
         }).then(()=>{
             return res.status(200).send(Object.assign({eliza: response}, {status:"OK"}));
         }).catch((err)=>{
-            return res.status(400).send(Object.assign(err, {status:"ERROR"}));
+            return res.status(200).send(Object.assign(err, {status:"ERROR"}));
         });
     });
 
@@ -53,7 +53,7 @@ exports.getRoute = function (s) {
     });
 
 	router.post('/eliza', urlParser, function (req, res, next) {
-        if(!req.body.name) return res.status(400).send(Object.assign({error:'bad request'}, {status:"ERROR"}));
+        if(!req.body.name) return res.status(200).send(Object.assign({error:'bad request'}, {status:"ERROR"}));
         res.render('eliza', {
 			name: req.body.name,
 			date: new Date().toString(),
@@ -61,24 +61,24 @@ exports.getRoute = function (s) {
     });
     
     router.all('/listconv', jsonParser, function (req, res, next) {
-        if(!req.userLoginInfo) return res.status(400).send({status: 'ERROR', error: 'bad request'});
+        if(!req.userLoginInfo) return res.status(200).send({status: 'ERROR', error: 'bad request'});
         
         s.convConn.listConversation({sessionToken: req.userLoginInfo.sessionToken})
             .then(function (result) {
                 return res.status(200).send(Object.assign(result, {status:"OK"}));
             }).catch(function (err) {
-                return res.status(400).send(Object.assign(err, {status:"ERROR"}));
+                return res.status(200).send(Object.assign(err, {status:"ERROR"}));
             });
     });
     
     router.post('/getconv', jsonParser, function (req, res, next) {
-        if(!req.userLoginInfo) return res.status(400).send({status: 'ERROR', error: 'bad request'});
+        if(!req.userLoginInfo) return res.status(200).send({status: 'ERROR', error: 'bad request'});
         
         s.convConn.showConversation({id: req.body.id})
             .then(function (result) {
                 return res.status(200).send(Object.assign(result, {status:"OK"}));
             }).catch(function (err) {
-                return res.status(400).send(Object.assign(err, {status:"ERROR"}));
+                return res.status(200).send(Object.assign(err, {status:"ERROR"}));
             });
     });
 

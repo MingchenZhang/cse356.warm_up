@@ -10,19 +10,19 @@ exports.getRoute = function (s) {
 
     router.post('/adduser', jsonParser, function (req, res, next) {
         if(!s.tools.isAllString(req.body))
-            return res.status(400).send({status: 'ERROR', error: 'format error'});
+            return res.status(200).send({status: 'ERROR', error: 'format error'});
         
         s.userConn.createUser({email: req.body.email, username:req.body.username, password: req.body.password})
             .then(function (result) {
                 return res.status(200).send({status: 'OK', success: 'account created'});
             })
             .catch(function (err) {
-                return res.status(400).send(err);
+                return res.status(200).send(err);
             });
     });
 
     router.get('/verify', urlParser, function (req, res, next) {
-        if(!req.query.email && !req.query.key) return res.status(400).send('bad request');
+        if(!req.query.email && !req.query.key) return res.status(200).send('bad request');
         //check if email and key are valid!!!!!!!!!!!
         res.render('verify', {
             email: req.query.email,
@@ -32,7 +32,7 @@ exports.getRoute = function (s) {
 
     router.post('/verify', jsonParser, function (req, res, next) {
         if(!s.tools.isAllString(req.query))
-            return res.status(400).send({status: 'ERROR', error: 'format error'});
+            return res.status(200).send({status: 'ERROR', error: 'format error'});
         
         var promise = null;
         if(req.body.key == 'abracadabra'){
@@ -44,13 +44,13 @@ exports.getRoute = function (s) {
         promise.then(function (result) {
             return res.status(200).send({status: 'OK', success: 'account verified'});
         }).catch(function (err) {
-            return res.status(400).send(err);
+            return res.status(200).send(err);
         });
     });
 
     router.post('/login', jsonParser, function (req, res, next) {
         if(!s.tools.isAllString(req.query))
-            return res.status(400).send({status: 'ERROR', error: 'format error'});
+            return res.status(200).send({status: 'ERROR', error: 'format error'});
         
         s.userConn.userLogin({username: req.body.username, password: req.body.password})
             .then(function (session) {
@@ -59,7 +59,7 @@ exports.getRoute = function (s) {
                 return res.status(200).send({status: 'OK', success: 'logged in'});
             })
             .catch(function (err) {
-                return res.status(400).send(err);
+                return res.status(200).send(err);
             });
     });
     
@@ -70,7 +70,7 @@ exports.getRoute = function (s) {
                 return res.status(200).send({status: 'OK', success: 'logged out'});
             })
             .catch(function (err) {
-                return res.status(400).send(err);
+                return res.status(200).send(err);
             });
     });
 
