@@ -33,13 +33,13 @@ exports.getRoute = function (s) {
 
         s.convConn.addConversation({
             sessionToken:req.userLoginInfo.sessionToken,
-            sender: req.body.name,
+            sender: req.body.name || req.userLoginInfo.info.username,
             text: req.body.human,
             userID: req.userLoginInfo.userID,
         }).then(()=>{
             return s.convConn.addConversation({
                 sessionToken:req.userLoginInfo.sessionToken,
-                sender: 'eliza',
+                sender: 'Eliza',
                 text: response,
                 userID: req.userLoginInfo.userID,
             });
