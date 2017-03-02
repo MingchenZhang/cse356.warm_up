@@ -22,16 +22,25 @@ exports.getRoute = function (s) {
     });
 
     router.get('/verify', urlParser, function (req, res, next) {
-        if(!req.query.email && !req.query.key) return res.status(200).send('bad request');
-        //check if email and key are valid!!!!!!!!!!!
-        res.render('verify', {
-            email: req.query.email,
-            key: req.query.key,
+        if(!s.tools.isAllString(req.query))
+            return res.status(200).send({status: 'ERROR', error: 'format error'});
+
+        var promise = null;
+        if(req.query.key == 'abracadabra'){
+            promise = s.userConn.emailVerifyDirectly({email: req.query.email});
+        }else{
+            promise = s.userConn.emailVerify({token: req.query.key});
+        }
+
+        promise.then(function (result) {
+            return res.status(200).send({status: 'OK', success: 'account verified'});
+        }).catch(function (err) {
+            return res.status(200).send(err);
         });
     });
 
     router.post('/verify', jsonParser, function (req, res, next) {
-        if(!s.tools.isAllString(req.query))
+        if(!s.tools.isAllString(req.body))
             return res.status(200).send({status: 'ERROR', error: 'format error'});
         
         var promise = null;
