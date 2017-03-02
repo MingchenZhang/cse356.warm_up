@@ -46,7 +46,7 @@ exports.addConversation = function (param) {
     var userID = param.userID;
     
     if(typeof sessionToken != 'string') return When.reject({status:"ERROR", error: 'session not recognized'});
-    if(typeof sender != 'string') sender = 'undefined';
+    if(typeof sender != 'string') sender = 'human';
     if(typeof text != 'string') return When.reject({status:"ERROR", error: 'text not recognized'});
     
     function addConv(value) {
