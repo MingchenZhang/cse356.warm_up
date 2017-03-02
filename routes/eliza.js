@@ -12,7 +12,7 @@ exports.getRoute = function (s) {
         res.render('home-page');
     });
 
-    router.post('/eliza/DOCTOR', jsonParser, function (req, res, next) {
+    router.post(['/eliza/DOCTOR', '/DOCTOR'], jsonParser, function (req, res, next) {
         if(!req.userLoginInfo) return res.status(400).send({status: 'ERROR', error: 'bad request'});
         
         function generateText(name){
