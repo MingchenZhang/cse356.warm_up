@@ -13,7 +13,6 @@ exports.getRoute = function (s) {
     });
 
     router.post(['/eliza/DOCTOR', '/DOCTOR'], jsonParser, function (req, res, next) {
-        if(!req.userLoginInfo) return res.status(400).send({status: 'ERROR', error: 'bad request'});
         
         function generateText(name){
             var num = Math.floor(Math.random()*3);
@@ -29,7 +28,9 @@ exports.getRoute = function (s) {
         if(!req.body.human) return res.status(400).send('bad request');
         
         var response = generateText(req.body.human)+"(id="+Math.floor(Math.random()*9999)+")";
-        
+
+        if(!req.userLoginInfo) return res.status(400).send(Object.assign({eliza: response}, {status:"OK"}));
+
         s.convConn.addConversation({
             sessionToken:req.userLoginInfo.sessionToken,
             sender: req.body.name,
@@ -41,7 +42,7 @@ exports.getRoute = function (s) {
                 text: response
             });
         }).then(()=>{
-            return res.status(200).send(Object.assign({eliza: response}, {status:"ERROR"}));
+            return res.status(200).send(Object.assign({eliza: response}, {status:"OK"}));
         }).catch((err)=>{
             return res.status(400).send(Object.assign(err, {status:"ERROR"}));
         });
