@@ -44,7 +44,8 @@ exports.logRequest = function(request){
         time: new Date(),
         ip: request.ip,
         url: request.originalUrl,
-        method: request.method
+        method: request.method,
+        body: body
     };
 
     loggingDB.requestsColl.insertOne(record);

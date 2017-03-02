@@ -5,6 +5,7 @@ var Mongodb = require('mongodb');
 var Cluster = require('cluster');
 var When = require('when');
 var Ejs = require('ejs');
+var BodyParser = require('body-parser');
 
 if (Cluster.isMaster) {
     var numWorkers = process.env.WORKERS || 1;
@@ -42,7 +43,9 @@ if (Cluster.isMaster) {
     // web server initialization
     var app = Express();
 
-    app.use((req, res, next)=>{
+    // debug logging
+    var jsonParser = BodyParser.json({limit: '10kb'});
+    app.use(jsonParser, (req, res, next)=>{
         s.logConn.logRequest(req);
         next();
     });
