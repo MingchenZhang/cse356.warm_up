@@ -8,10 +8,6 @@ exports.getRoute = function (s) {
     var urlParser = BodyParser.urlencoded({extended: false, limit: '10kb'});
     var jsonParser = BodyParser.json({limit: '10kb'});
 
-    router.get('/', function (req, res, next) {
-        res.render('home-page');
-    });
-
     router.post(['/eliza/DOCTOR', '/DOCTOR'], jsonParser, function (req, res, next) {
         
         function generateText(name){
@@ -50,17 +46,25 @@ exports.getRoute = function (s) {
         });
     });
 
-    router.get('/eliza', function (req, res, next) {
+    router.get('/', function (req, res, next) {
         res.render('eliza', {});
     });
 
-	router.post('/eliza', urlParser, function (req, res, next) {
+    router.get('/adduser', function (req, res, next) {
+        res.render('adduser', {});
+    });
+
+    router.get('/verify', function (req, res, next) {
+        res.render('verify', {});
+    });
+
+	/*router.post('/eliza', urlParser, function (req, res, next) {
         if(!req.body.name) return res.status(200).send(Object.assign({error:'bad request'}, {status:"ERROR"}));
         res.render('eliza', {
 			name: req.body.name,
 			date: new Date().toString(),
 		});
-    });
+    });*/
     
     router.all('/listconv', jsonParser, function (req, res, next) {
         if(!req.userLoginInfo) return res.status(200).send({status: 'ERROR', error: 'bad request'});
