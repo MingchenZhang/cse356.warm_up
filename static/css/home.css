@@ -1,0 +1,66 @@
+html,body{
+	height: 100%;
+	width: 100%;
+}
+body{
+	background: #1565c0;
+}
+body,td,tr{
+	padding: 0;
+	margin: 0;
+}
+table{
+	width: 300px;
+}
+ul.tabs{
+	background: #1565c0;
+	margin-bottom: 5px;
+}
+.tabs .tab a{
+	color: rgba(255,255,255,0.7);
+}
+.tabs .tab a:hover, .tabs .tab a.active{
+    color: white;
+}
+.tabs .tab a.active{
+	font-weight: bold;
+}
+.tabs .indicator{
+	background: white;
+}
+button.btn{
+	width: 145px;
+	height: 40px;
+	margin: 15px 0px 0px 0px;
+	font-size: 11px;
+	background: #1E88E5;
+}
+button.btn:hover{
+	background: #1879cd !important;
+}
+input[type=text],input[type=password]{
+	border-bottom: 1px solid rgba(255,255,255,0.7) !important;
+	margin-bottom: 15px !important;
+}
+input[type=text]:focus,input[type=password]:focus{
+	border-bottom: 1px solid white !important;
+	box-shadow: 0 1px 0 0 white !important;
+}
+#project-name{
+	font-family: 'Fira Sans';
+	font-size: 60px;
+	font-weight: bold;
+	padding: 10px;
+	color: white;
+}
+#section1{
+	position: absolute;
+	top: 32%;
+	left: 50%;
+	height: 420px;
+	margin-top: -110px;
+	transform: translateX(-50%);
+}
+form{
+	color: white;
+}

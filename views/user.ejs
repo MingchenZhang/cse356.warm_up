@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="static/css/user.css">
+</head>
+
+
+<body>
+
+<nav id="top-nav" class="noShadow">
+<div class="nav-wrapper container">
+	<a href="#" class="nav-logo">Test</a>
+	<ul class="right">
+	<li><button class="btn blue darken-1" type="button" id="logout-btn">logout</button></li>
+	</ul>
+</div>
+</nav>
+
+<center>
+<section class="top-section">
+	<i class="photo material-icons">face</i>
+	<div id="name"><%=username%></div>
+</section>
+
+<ul class="tabs">
+<li class="tab"><a href="#tweets" class="active">Tweets</a></li>
+<li class="tab"><a href="#following">Following</a></li>
+<li class="tab"><a href="#followers">Followers</a></li>
+</ul>
+
+
+<div id="tweets" class="col s12">
+<div class="container row">
+<div class="col s12 m5 l4">
+	<div class="content-left"><center>	
+	<textarea id="textarea1" placeholder="Post a New Tweet..."></textarea>
+	<div><button class="btn blue darken-1" type="button" id="tweet-btn">Submit</button></div>
+	</center></div>
+</div>
+
+<div id="" class="col s12 m7 l8">
+	<div class="content-right"><center>
+	<ul id="tweet-collection" class="collection">
+	</ul>
+	</center></div>
+</div>
+</div>
+</div>
+
+<div id="following" class="col s12">Following</div>
+<div id="followers" class="col s12">Followers</div>
+</center>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+<script src="static/javascript/user.js"></script>
+</body>
+</html>

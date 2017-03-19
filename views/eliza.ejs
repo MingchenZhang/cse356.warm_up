@@ -1,103 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Eliza</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Test</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans:700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="static/css/home.css">
 </head>
 
 
 <body>
 
 <center>
-<div id="eliza-name">Eliza</div>
 <section id="section1">
+<div id="project-name">Test</div>
+
 <ul class="tabs">
-<li class="tab"><a href="#demo-tab" class="active">Demo</a></li>
-<li class="tab"><a href="#adduser-form">Add User</a></li>
-<li class="tab"><a href="#verify-form">Verify</a></li>
-<li class="tab"><a href="#login-form">Login</a></li>
+<li class="tab"><a target="_self" href="/" class="active">Login</a></li>
+<li class="tab"><a target="_self" href="/adduser">Register</a></li>
+<li class="tab"><a target="_self" href="/verify">Verify</a></li>
 </ul>
 
-<div id="demo-tab">
-<form action="/eliza" method="post">
-    <table>
-    <tr><td>Name: </td>
-        <td><input type="text" name="name"></td>
-        <td><button class="btn red" type="submit">Submit</button></td></tr>
-    </table>
-</form>
-<% if(typeof name !== 'undefined' ) { %>
-<div>Hello <%=name%>, <%=date%></div>
-<form>
-    <table>
-    <tr><td>Human: </td>
-        <td><input type="text" name="name" id="name-text"></td>
-        <td><button class="btn red" type="button" id="submit-btn">Submit</button></td></tr>
-    </table>
-    <textarea class="form-control" rows="10" id="result-area"></textarea>
-</form>
-<% } %>
-</div>
-
-<form id="adduser-form">
-    <table>
-    <tr><td>Username: </td><td><input type="text" name="username"></td></tr>
-    <tr><td>Password: </td><td><input type="password" name="password"></td></tr>
-    <tr><td>Email: </td><td><input type="text" name="email"></td></tr>
-    </table>
-    <button class="btn red" type="button" id="adduser-btn">Submit</button>
-</form>
-
-<form id="verify-form">
-    <table>
-    <tr><td>Email: </td><td><input type="text" name="email"></td></tr>
-    <tr><td>Key: </td><td><input type="password" name="key"></td></tr>
-    </table>
-    <button class="btn red" type="button" id="verify-btn">Submit</button>
-</form>
-
-<form id="login-form">
+<form id="login-form" method="post" action="user">
     <table>
     <tr><td>Username: </td><td><input type="text" name="username"></td></tr>
     <tr><td>Password: </td><td><input type="password" name="password"></td></tr>
     </table>
-    <button class="btn red" type="button" id="login-btn">Submit</button>
+    <button class="btn blue darken-1" type="button" id="login-btn">Submit</button>
 </form>
+
 </section>
-
-
-<form id="user-form">
-    <table>
-    <tr><td>Human: </td>
-        <td><input type="text" name="name" id="name-text2"></td></tr>
-    </table>
-    <div>
-        <button class="btn red" type="button" id="submit-btn2">Submit</button>
-        <button class="btn red" type="button" id="logout-btn">Logout</button>
-    </div>
-    <textarea class="form-control" rows="10" id="result-area2"></textarea>
-    <table>
-    <tr><td>ID: </td>
-        <td><input type="text" name="name" id="id"></td></tr>
-    </table>
-    <div>
-        <button class="btn red" type="button" id="listconv-btn">List Conv</button>
-        <button class="btn red" type="button" id="getconv-btn">Get Conv</button>
-    </div>
-    <textarea class="form-control" rows="10" id="result-area3"></textarea>
-</form>
-
 </center>
 
+
+
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<% if(typeof name !== 'undefined' ) { %>
-<script src="/static/javascript/script1.js"></script>
-<% } %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
-<script src="/static/javascript/script2.js"></script>
+<script src="/static/javascript/login.js"></script>
 
 </body>
 </html>
