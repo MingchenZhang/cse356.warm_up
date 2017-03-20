@@ -319,3 +319,22 @@ exports.getSession = (param) => {
 
     return getSession();
 };
+
+exports.getUserBasicInfo = function(param){
+    var userID = param.userID;
+
+    function getUserBasic(value) {
+        return new When.promise(function (resolve, reject) {
+            userDB.userBasicColl.findOne({_id: userID}, function (err, result) {
+                if(err) return reject({status: 'ERROR', error: 'database error'});
+                if(result !== null) {
+                    return resolve(result);
+                }else{
+                    return reject({status: 'ERROR', error: 'account not found'});
+                }
+            });
+        });
+    }
+
+    return getUserBasic();
+};

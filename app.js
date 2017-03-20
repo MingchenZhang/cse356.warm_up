@@ -39,6 +39,8 @@ if (Cluster.isMaster) {
     s.convConn.initDatabase(s, startupPromises);
     s.logConn = require('./database/logging');
     s.logConn.initDatabase(s, startupPromises);
+    s.tweetConn = require('./database/tweet');
+    s.tweetConn.initDatabase(s, startupPromises);
 
     // web server initialization
     var app = Express();

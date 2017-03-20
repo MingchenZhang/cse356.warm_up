@@ -1,0 +1,81 @@
+var Express = require('express');
+var BodyParser = require('body-parser');
+var When = require('when');
+
+exports.getRoute = function (s) {
+    var router = Express.Router();
+
+    var jsonParser = BodyParser.json({limit: '10kb'});
+
+    router.post('/additem', jsonParser, function (req, res, next) {
+        if (!s.tools.isAllString(req.body))
+            return res.status(400).send({status: 'ERROR', error: 'format error'});
+
+        s.tweetConn.addTweet({content: req.body.content, postedBy: req.userLoginInfo.userID})
+            .then(function (result) {
+                return res.status(200).send({status: 'OK', success: 'account created', id: result.insertedID});
+            })
+            .catch(function (err) {
+                return res.status(500).send({status: 'error', error: err});
+            });
+    });
+
+    router.get('/item/:id', function (req, res, next) {
+        if (!s.tools.isAllString(req.params))
+            return res.status(400).send({status: 'ERROR', error: 'format error'});
+
+        var tweetDoc = null;
+        s.tweetConn.getTweet({id: req.params.id})
+            .then((result)=>{
+                tweetDoc = result;
+                return {userID: result.postedBy};
+            })
+            .then(s.userConn.getUserBasicInfo)
+            .then(function (posterInfo) {
+                var item = {
+                    id: tweetDoc._id,
+                    username: posterInfo.username,
+                    content: tweetDoc.content,
+                    timestamp: Math.floor(tweetDoc.createdAt.getTime()/1000),
+                };
+                return res.status(200).send({status: 'OK', item: item});
+            })
+            .catch(function (err) {
+                return res.status(500).send({status: 'error', error: err});
+            });
+    });
+
+    router.post('/search', jsonParser, function (req, res, next) {
+        if (!s.tools.isAllString(req.params))
+            return res.status(400).send({status: 'ERROR', error: 'format error'});
+
+        var searchCondition = {};
+        if(req.body.timestamp) searchCondition.beforeDate = new Date(req.body.timestamp*1000);
+        searchCondition.limitDoc = req.body.limit;
+
+        var resultList = [];
+        s.tweetConn.searchTweet(searchCondition).then((tweetArray)=>{
+            var userInfoRetrivalPromises = [];
+            for(let i=0; i<tweetArray.length; i++) {
+                let index = i;
+                var tweet = tweetArray[i];
+                var promise = s.userConn.getUserBasic({userID: tweet.postedBy}).then((userInfo)=>{
+                    resultList[index] = {
+                        username: userInfo.username,
+                        id: tweet._id,
+                        content: tweet.content,
+                        timestamp: Math.floor(tweet.createdAt.getTime() / 1000),
+                    };
+                });
+                userInfoRetrivalPromises.push(promise);
+            }
+            return When.all(userInfoRetrivalPromises);
+        }).then((result)=>{
+            return res.status(200).send({status: 'OK', item: resultList});
+        }).catch((err)=>{
+            return res.status(400).send({status: 'error', error: err});
+        });
+    });
+
+    return router;
+};
