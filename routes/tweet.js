@@ -8,6 +8,9 @@ exports.getRoute = function (s) {
     var jsonParser = BodyParser.json({limit: '10kb'});
 
     router.post('/additem', jsonParser, function (req, res, next) {
+        if(!req.userLoginInfo)
+            return res.status(500).send({status: 'error', error: "user has not logged in"});
+
         s.tweetConn.addTweet({content: req.body.content, postedBy: req.userLoginInfo.userID})
             .then(function (result) {
                 return res.status(200).send({status: 'OK', success: 'post created', id: result.insertedID});
