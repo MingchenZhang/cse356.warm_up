@@ -8,9 +8,6 @@ exports.getRoute = function (s) {
     var jsonParser = BodyParser.json({limit: '10kb'});
 
     router.post('/additem', jsonParser, function (req, res, next) {
-        if (!s.tools.isAllString(req.body))
-            return res.status(400).send({status: 'ERROR', error: 'format error'});
-
         s.tweetConn.addTweet({content: req.body.content, postedBy: req.userLoginInfo.userID})
             .then(function (result) {
                 return res.status(200).send({status: 'OK', success: 'post created', id: result.insertedID});
@@ -21,9 +18,6 @@ exports.getRoute = function (s) {
     });
 
     router.get('/item/:id', function (req, res, next) {
-        if (!s.tools.isAllString(req.params))
-            return res.status(400).send({status: 'ERROR', error: 'format error'});
-
         var tweetDoc = null;
         s.tweetConn.getTweet({id: req.params.id})
             .then((result)=>{
@@ -46,9 +40,6 @@ exports.getRoute = function (s) {
     });
 
     router.post('/search', jsonParser, function (req, res, next) {
-        if (!s.tools.isAllString(req.params))
-            return res.status(400).send({status: 'ERROR', error: 'format error'});
-
         var searchCondition = {};
         if(req.body.timestamp) searchCondition.beforeDate = new Date(req.body.timestamp*1000+999);
         searchCondition.limitDoc = req.body.limit;
