@@ -23,6 +23,7 @@ exports.initDatabase = function (singleton, readyList) {
                 console.log('MongodbClient connection to ' + loggingDBPath + ' has been established');
 
                 loggingDB.requestsColl = db.collection('requests');
+                loggingDB.requestsColl.ensureIndex({time: 1}, {background: true, w: 1});
 
                 loggingDBReady.resolve();
             }

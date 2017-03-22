@@ -23,6 +23,7 @@ exports.initDatabase = function (singleton, readyList) {
                 console.log('MongodbClient connection to ' + tweetDBPath + ' has been established');
 
                 tweetDB.tweetColl = db.collection('tweets');
+                tweetDB.tweetColl.ensureIndex({createdAt: 1}, {background: true, w: 1});
 
                 tweetDBReady.resolve();
             }
