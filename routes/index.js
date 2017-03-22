@@ -5,6 +5,7 @@ function generateRouter(s) {
 
     router.use('/', require('./eliza').getRoute(s));
     router.use('/', require('./user').getRoute(s));
+    router.use('/', require('./tweet').getRoute(s));
 
     return router;
 }

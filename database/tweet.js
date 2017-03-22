@@ -7,7 +7,7 @@ var s;
 var tweetDB = {}; // user related collection
 
 exports.initDatabase = function (singleton, readyList) {
-    var s = singleton;
+    s = singleton;
 
     // user_info initialization
     var tweetDBPath = s.dbPath + 'tweet';
@@ -65,7 +65,7 @@ exports.addTweet = function(param){
 };
 
 exports.getTweet = function(param){
-    var id = param.id;
+    var id = s.mongodb.ObjectId(param.id);
 
     function getTweetDoc(value) {
         return new When.promise(function (resolve, reject) {
@@ -83,8 +83,8 @@ exports.getTweet = function(param){
 
 exports.searchTweet = function(param){
     if (param.beforeDate) var beforeDate = new Date(param.beforeDate);
-    if(param.limitDoc && param.limitDoc<=100)var limitDoc = parseInt(param.limitDoc);
-    else param.limitDoc = 25;
+    var limitDoc = 25;
+    if(typeof param.limitDoc == 'number' && param.limitDoc<=100 && param.limitDoc>0 ) limitDoc = param.limitDoc;
 
     function getTweetArray() {
         return new When.promise(function (resolve, reject) {
@@ -92,7 +92,7 @@ exports.searchTweet = function(param){
             if(param.beforeDate) query.createdAt = {$lte: beforeDate};
             tweetDB.tweetColl.find(query).limit(limitDoc).toArray(function (err, array) {
                 if(err) {
-                    reject({error: lan.DATABASE_ERROR});
+                    reject({error: err});
                 }else{
                     resolve(array);
                 }

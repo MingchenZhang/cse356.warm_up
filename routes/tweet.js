@@ -13,7 +13,7 @@ exports.getRoute = function (s) {
 
         s.tweetConn.addTweet({content: req.body.content, postedBy: req.userLoginInfo.userID})
             .then(function (result) {
-                return res.status(200).send({status: 'OK', success: 'account created', id: result.insertedID});
+                return res.status(200).send({status: 'OK', success: 'post created', id: result.insertedID});
             })
             .catch(function (err) {
                 return res.status(500).send({status: 'error', error: err});
@@ -50,7 +50,7 @@ exports.getRoute = function (s) {
             return res.status(400).send({status: 'ERROR', error: 'format error'});
 
         var searchCondition = {};
-        if(req.body.timestamp) searchCondition.beforeDate = new Date(req.body.timestamp*1000);
+        if(req.body.timestamp) searchCondition.beforeDate = new Date(req.body.timestamp*1000+999);
         searchCondition.limitDoc = req.body.limit;
 
         var resultList = [];
@@ -58,8 +58,8 @@ exports.getRoute = function (s) {
             var userInfoRetrivalPromises = [];
             for(let i=0; i<tweetArray.length; i++) {
                 let index = i;
-                var tweet = tweetArray[i];
-                var promise = s.userConn.getUserBasic({userID: tweet.postedBy}).then((userInfo)=>{
+                let tweet = tweetArray[i];
+                let promise = s.userConn.getUserBasicInfo({userID: tweet.postedBy}).then((userInfo)=>{
                     resultList[index] = {
                         username: userInfo.username,
                         id: tweet._id,
@@ -71,7 +71,7 @@ exports.getRoute = function (s) {
             }
             return When.all(userInfoRetrivalPromises);
         }).then((result)=>{
-            return res.status(200).send({status: 'OK', item: resultList});
+            return res.status(200).send({status: 'OK', items: resultList});
         }).catch((err)=>{
             return res.status(400).send({status: 'error', error: err});
         });
