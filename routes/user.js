@@ -83,8 +83,8 @@ exports.getRoute = function (s) {
             });
     });
 
-    router.post('/user', urlParser, function (req, res, next) {
-        res.render('user', {username: req.body.username});
+    router.get('/user', urlParser, function (req, res, next) {
+        res.render('user', {username: req.userLoginInfo.info.username});
     });
 
     return router;

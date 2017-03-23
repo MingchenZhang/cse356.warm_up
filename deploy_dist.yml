@@ -1,0 +1,117 @@
+---
+- hosts: project2
+  become: yes
+  become_method: sudo
+  vars:
+    project_name: cse356.warm_up
+    http_port: 80
+    DB_PORT: 3434
+    systemd_config_nodejs: |
+        [Unit]
+        Description=simple nodejs server
+        Requires=simple_mongodb_server.service
+
+        [Service]
+        User=root
+        Group=root
+        WorkingDirectory=/var/node/{{project_name}}/
+        Environment=HTTP_PORT=80
+        Environment=DB_PATH=mongodb://localhost:{{DB_PORT}}/
+        ExecStart=/usr/bin/node app.js
+
+        [Install]
+        WantedBy=multi-user.target
+    systemd_config_mongodb: |
+        [Unit]
+        Description=simple mongodb server
+
+        [Service]
+        User=root
+        Group=root
+        ExecStart=/usr/bin/mongod --bind_ip 127.0.0.1 --dbpath /var/mongodb/{{project_name}} --port {{DB_PORT}}
+
+        [Install]
+        WantedBy=multi-user.target
+  
+  gather_facts: no
+  pre_tasks:
+  - name: install python2
+    raw: sudo apt-get update && sudo apt-get -y install python-simplejson
+
+  tasks:
+#  - name: ensure git is installed
+#    apt:
+#      name: git
+#      update_cache: yes
+  - name: ensure systemd is installed
+    apt:
+      name: systemd
+  
+  - name: download nodejs apt repository install script
+    get_url:
+      url: http://deb.nodesource.com/setup_6.x
+      dest: /root/nodejs_setup.sh
+      mode: 0744
+  - name: run nodejs apt repository install script
+    command: sh /root/nodejs_setup.sh
+  - name: install nodejs
+    apt:
+      name: nodejs
+      update_cache: yes
+      
+  - name: add mongodb apt key
+    command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+  - name: write apt list file for mongodb
+    copy:
+      content: "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse"
+      dest: /etc/apt/sources.list.d/mongodb-org-3.4.list
+  - name: install mongo server
+    apt:
+      name: mongodb-org-server
+      update_cache: yes
+  
+  - name: create folder for website resources
+    file: 
+      path: /var/node/{{project_name}}/
+      state: directory
+      recurse: yes
+  - name: archive all file in git
+    local_action: shell git archive HEAD > archive.tar.gz
+    become: false
+  - name: unarchive files
+    unarchive:
+      src: archive.tar.gz
+      dest: /var/node/{{project_name}}/
+      
+  - name: create folder for mongodb
+    file:
+      path: /var/mongodb/{{project_name}}
+      state: directory
+  
+  - name: write systemd config to auto run nodejs
+    copy:
+      content: "{{ systemd_config_nodejs }}"
+      dest: /etc/systemd/system/simple_nodejs_server.service
+  - name: enable the service
+    command: systemctl enable simple_nodejs_server.service
+  
+  - name: write systemd config to auto run mongodb
+    copy:
+      content: "{{ systemd_config_mongodb }}"
+      dest: /etc/systemd/system/simple_mongodb_server.service
+  - name: enable the service
+    command: systemctl enable simple_mongodb_server.service
+  
+  - name: start the nodejs service
+    command: systemctl restart simple_nodejs_server.service
+  
+  - name: pause 5 seconds
+    pause:
+      seconds: 5
+      
+  
+  - name: get nodejs status
+    command: systemctl status simple_nodejs_server.service -n30
+    register: node_status
+  - debug: msg="{{ node_status.stdout }}"
+  - debug: msg="{{ node_status.stderr }}"

@@ -47,7 +47,11 @@ exports.getRoute = function (s) {
     });
 
     router.get('/', function (req, res, next) {
-        res.render('eliza', {});
+        if(req.userLoginInfo){
+            res.redirect('/user');
+        }else{
+            res.render('eliza', {});
+        }
     });
 
     router.get('/adduser', function (req, res, next) {
