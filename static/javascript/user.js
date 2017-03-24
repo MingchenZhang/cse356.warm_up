@@ -50,12 +50,26 @@ $(document).ready(function(){
 
     $('#search-btn').click(function () {
         var num = parseInt(document.getElementById("npicker").value);
-        getItemListHelper(getTimeStampFromDatePicker(),num,false,true);
+        if(!num || !Number.isInteger(num) || num<1 || num>100){
+            document.getElementById("npicker").value=25;
+        }
+        getItemList(getTimeStampFromDatePicker(),num,false,true);
     });
 
 
     $('#loadmore-btn').click(function () {
         getItemList(loadMoreTimestamp,25,true,false);
+    });
+
+    $('.datepicker').pickadate({
+        selectMonths: false,
+        selectYears: 10,
+        max: new Date(),
+        format: 'yyyy-mm-dd',
+        onClose: function(){
+            $('.datepicker').blur();
+            $('.picker').blur();
+        }
     });
 /*var y_value = $("#textarea-container").offset().top;
 window.alert(y_value);*/
@@ -90,12 +104,19 @@ function setDefaultDate(){
 
 
 function getTimeStampFromDatePicker(){
+    if(!document.getElementById("dpicker").value){
+        setDefaultDate();
+    }
     var list = document.getElementById("dpicker").value.split("-");
     var date = new Date(list[0], list[1]-1, list[2]);
     var today = new Date();
-    var result = date.getTime()/1000;
+    var result;
     if(today.setHours(0,0,0,0) == date.setHours(0,0,0,0)){
         result = new Date().getTime()/1000;
+    }
+    else{
+        date.setHours(23,59,59,999);
+        result = date.getTime()/1000;
     }
     return result;
 }
@@ -137,16 +158,6 @@ function createCollectionItem(name,text,time){
     list_item.appendChild(content_text);
     list_item.appendChild(time_text);
     tweet_list.appendChild(list_item);
-}
-
-
-function getItemListHelper(time,num,isLoadMore,isRearch){
-    if(num<1 || num>100 || !Number.isInteger(num)){
-        Materialize.toast("invalid input", 2500, "red");
-    }
-    else{
-        getItemList(time,num,isLoadMore,isRearch);
-    }
 }
 
 function getItemList(time,num,isLoadMore,isRearch){
