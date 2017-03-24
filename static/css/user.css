@@ -125,6 +125,31 @@ button.btn:hover{
 	margin-bottom: 10px !important;
 }
 
+
+
+
+.picker__date-display{
+	background-color: #1E88E5;
+}
+
+.picker__weekday-display{
+	background-color: #1565c0;
+}
+.picker__day--selected, .picker__day--selected:hover, .picker--focused .picker__day--selected{
+	background-color: #1E88E5;
+}
+.picker__day.picker__day--today{
+	color: #1E88E5;
+}
+.picker__close, .picker__today{
+	color: #1E88E5;
+}
+.picker__box {
+	border-top-color: #1565c0;
+}
+.picker__nav--prev:hover, .picker__nav--next:hover{
+	background: #76b7ef;
+}
 /*.nav-wrapper form{
 	display: inline-block;
 }*/

@@ -56,6 +56,23 @@ $(document).ready(function(){
         getItemList(getTimeStampFromDatePicker(),num,false,true);
     });
 
+    $('#search2-btn').click(function () {
+        $.ajax({
+            url: '/item/'+$('#itemid').val(),
+            type: 'get',
+        }).done(function (result) {
+            //Materialize.toast(result.error, 2500, "red");
+            //Materialize.toast(result.success, 2500, "green");
+            if(result.status === "OK"){
+                removeCollectionItem();
+                var item = result.item;
+                createCollectionItem(item.username,item.content,item.timestamp);
+                $("#loadmore-btn").hide();
+            }
+        }).fail(function (err) {
+            console.error(err);
+        });
+    });
 
     $('#loadmore-btn').click(function () {
         getItemList(loadMoreTimestamp,25,true,false);
