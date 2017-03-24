@@ -1,3 +1,7 @@
+/*
+ *Javascript for the Twitter clone
+ *Authors: Mingchen Zhang and Haozhi Qu
+ */
 $(document).ready(function(){
 $('#login-btn').click(function () {
     $.ajax({
@@ -8,7 +12,6 @@ $('#login-btn').click(function () {
         dataType: 'json'
     }).done(function (result) {
         Materialize.toast(result.error, 2500, "red");
-        //Materialize.toast(result.success, 2500, "green");
         if(typeof result.success!=="undefined"){
             location.reload();
         }

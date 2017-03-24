@@ -1,3 +1,7 @@
+/*
+ *Javascript for the Twitter clone
+ *Authors: Mingchen Zhang and Haozhi Qu
+ */
 $(document).ready(function(){
 $('#adduser-btn').click(function () {
     $.ajax({

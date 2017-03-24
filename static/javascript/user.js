@@ -1,3 +1,9 @@
+/*
+ *Javascript for the Twitter clone
+ *Authors: Mingchen Zhang and Haozhi Qu
+ */
+var buttomTimeStamp;
+
 $(document).ready(function(){
 setDefaultDate();
 getItemList(25,true);
