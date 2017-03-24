@@ -2,53 +2,61 @@
  *Javascript for the Twitter clone
  *Authors: Mingchen Zhang and Haozhi Qu
  */
-var buttomTimeStamp;
-
+var loadMoreTimestamp;
+var numFromNumberPicker;
 $(document).ready(function(){
-setDefaultDate();
-getItemList(25,true);
-$(document).scroll(function(){
-    scrollEffect();
-});
-
-$('#logout-btn').click(function () {
-    $.ajax({
-        url: '/logout',
-        type: 'post',
-        contentType: "application/json; charset=utf-8",
-        dataType: 'json'
-    }).done(function (result) {
-        Materialize.toast(result.error, 2500, "red");
-        if(typeof result.success!=="undefined"){
-            document.location.href = "/";
-        }
-    }).fail(function (err) {
-        console.error(err);
+    setDefaultDate();
+    loadMoreTimestamp = getTimeStampFromDatePicker();
+    numFromNumberPicker = 25;
+    getItemList(getTimeStampFromDatePicker(),25,false,false);
+    $(document).scroll(function(){
+        scrollEffect();
     });
-});
 
-$('#tweet-btn').click(function () {
-    $.ajax({
-        url: '/additem',
-        type: 'post',
-        data: JSON.stringify({content: $('#textarea1').val()}),
-        contentType: "application/json; charset=utf-8",
-        dataType: 'json'
-    }).done(function (result) {
-        Materialize.toast(result.error, 2500, "red");
-        Materialize.toast(result.success, 2500, "green");
-        if(typeof result.success!=="undefined"){
-            getItemList(0,false);
-        }
-    }).fail(function (err) {
-        console.error(err);
+    $('#logout-btn').click(function () {
+        $.ajax({
+            url: '/logout',
+            type: 'post',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json'
+        }).done(function (result) {
+            Materialize.toast(result.error, 2500, "red");
+            if(typeof result.success!=="undefined"){
+                document.location.href = "/";
+            }
+        }).fail(function (err) {
+            console.error(err);
+        });
     });
-});
+
+    $('#tweet-btn').click(function () {
+        $.ajax({
+            url: '/additem',
+            type: 'post',
+            data: JSON.stringify({content: $('#textarea1').val()}),
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json'
+        }).done(function (result) {
+            Materialize.toast(result.error, 2500, "red");
+            Materialize.toast(result.success, 2500, "green");
+            if(typeof result.success!=="undefined"){
+                getItemList(getTimeStampFromDatePicker(),numFromNumberPicker,false,false);
+            }
+        }).fail(function (err) {
+            console.error(err);
+        });
+    });
 
 
-$('#search-btn').click(function () {
-    getItemList(0,false);
-});
+    $('#search-btn').click(function () {
+        var num = parseInt(document.getElementById("npicker").value);
+        getItemListHelper(getTimeStampFromDatePicker(),num,false,true);
+    });
+
+
+    $('#loadmore-btn').click(function () {
+        getItemList(loadMoreTimestamp,25,true,false);
+    });
 /*var y_value = $("#textarea-container").offset().top;
 window.alert(y_value);*/
 });
@@ -81,7 +89,7 @@ function setDefaultDate(){
 }
 
 
-function getTimeStamp(){
+function getTimeStampFromDatePicker(){
     var list = document.getElementById("dpicker").value.split("-");
     var date = new Date(list[0], list[1]-1, list[2]);
     var today = new Date();
@@ -104,6 +112,9 @@ function iterateItemList(itemlist){
     for(var i = 0; i<itemlist.length; i++) {
         var item = itemlist[i];
         createCollectionItem(item.username,item.content,item.timestamp);
+        if(i==itemlist.length-1){
+            loadMoreTimestamp = item.timestamp;
+        }
     }
 }
 
@@ -129,33 +140,42 @@ function createCollectionItem(name,text,time){
 }
 
 
-function getItemList(num1,isStart){
-    var num= parseInt(document.getElementById("npicker").value);
-    if(isStart){
-        num = num1;
-    }
+function getItemListHelper(time,num,isLoadMore,isRearch){
     if(num<1 || num>100 || !Number.isInteger(num)){
         Materialize.toast("invalid input", 2500, "red");
     }
     else{
-    var result = getTimeStamp();
+        getItemList(time,num,isLoadMore,isRearch);
+    }
+}
+
+function getItemList(time,num,isLoadMore,isRearch){
     $.ajax({
         url: '/search',
         type: 'post',
-        data: JSON.stringify({timestamp: result, limit: num}),
+        data: JSON.stringify({timestamp: time, limit: num}),
         contentType: "application/json; charset=utf-8",
         dataType: 'json'
     }).done(function (result) {
         Materialize.toast(result.error, 2500, "red");
-        //Materialize.toast(result.status, 2500, "green");
-        removeCollectionItem();
         if(result.status === "OK"){
+            if(!isLoadMore){
+                removeCollectionItem();
+            }
+            if(isRearch&&numFromNumberPicker!=num){
+                numFromNumberPicker = num;
+            }
             var itemlist = result.items;
+            if(itemlist.length<num){
+                $("#loadmore-btn").hide();
+            }
+            else{
+                $("#loadmore-btn").show();
+            }
             iterateItemList(itemlist);
         }
     }).fail(function (err) {
         console.error(err);
     });
-    }
 }
 
