@@ -91,7 +91,7 @@ exports.searchTweet = function(param){
         return new When.promise(function (resolve, reject) {
             var query = {};
             if(param.beforeDate) query.createdAt = {$lte: beforeDate};
-            tweetDB.tweetColl.find(query).limit(limitDoc).toArray(function (err, array) {
+            tweetDB.tweetColl.find(query).sort({createdAt:-1}).limit(limitDoc).toArray(function (err, array) {
                 if(err) {
                     reject({error: err});
                 }else{
