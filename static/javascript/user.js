@@ -1,16 +1,5 @@
 $(document).ready(function(){
-var date = new Date();
-var year = date.getFullYear();
-var month = date.getMonth() + 1;
-var day = date.getDate();
-if(day<10){
-    day = "0"+day;
-}
-if(month<10){
-    month = "0"+month;
-}
-document.getElementById("dpicker").value = year+"-"+month+"-"+day;
-
+setDefaultDate();
 getItemList(25,true);
 $(document).scroll(function(){
     scrollEffect();
@@ -51,7 +40,6 @@ $('#tweet-btn').click(function () {
 });
 
 
-
 $('#search-btn').click(function () {
     getItemList(0,false);
 });
@@ -59,28 +47,31 @@ $('#search-btn').click(function () {
 window.alert(y_value);*/
 });
 
-var tweet_list = document.getElementById("tweet-collection");
-function createCollectionItem(name,text){
-    var list_item = document.createElement('li');
-    var icon = document.createElement('i');
-    var title = document.createElement('span');
-    var content_text = document.createElement('p');
-    list_item.className = "collection-item avatar";
-    icon.className = "material-icons circle";
-    title.className = "title";
-    icon.innerHTML = "face";
-    title.innerHTML = name;
-    content_text.innerHTML = text;
-    list_item.appendChild(icon);
-    list_item.appendChild(title);
-    list_item.appendChild(content_text);
-    tweet_list.appendChild(list_item);
+
+function scrollEffect(){
+    var top_nav = $("#top-nav");
+    var y_value = $(document).scrollTop();
+    if(y_value==0 && !top_nav.hasClass("noShadow")){
+        top_nav.addClass("noShadow");
+    }
+    else if(top_nav.hasClass("noShadow")){
+        top_nav.removeClass("noShadow");
+    }
 }
 
-function removeCollectionItem(){
-    while(tweet_list.hasChildNodes()){
-        tweet_list.removeChild(tweet_list.lastChild);
+
+function setDefaultDate(){
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    if(day<10){
+        day = "0"+day;
     }
+    if(month<10){
+        month = "0"+month;
+    }
+    document.getElementById("dpicker").value = year+"-"+month+"-"+day;
 }
 
 
@@ -95,23 +86,40 @@ function getTimeStamp(){
     return result;
 }
 
-function iterateItemList(itemlist){
-    //window.alert(itemlist.length);
-    for(var i = 0; i<itemlist.length; i++) {
-        var item = itemlist[i];
-        createCollectionItem(item.username,item.content);
+function removeCollectionItem(){
+    var tweet_list = document.getElementById("tweet-collection");
+    while(tweet_list.hasChildNodes()){
+        tweet_list.removeChild(tweet_list.lastChild);
     }
 }
 
-var top_nav = $("#top-nav");
-function scrollEffect(){
-    var y_value = $(document).scrollTop();
-    if(y_value==0 && !top_nav.hasClass("noShadow")){
-        top_nav.addClass("noShadow");
+
+function iterateItemList(itemlist){
+    for(var i = 0; i<itemlist.length; i++) {
+        var item = itemlist[i];
+        createCollectionItem(item.username,item.content,item.timestamp);
     }
-    else if(top_nav.hasClass("noShadow")){
-        top_nav.removeClass("noShadow");
-    }
+}
+
+function createCollectionItem(name,text,time){
+    var tweet_list = document.getElementById("tweet-collection");
+    var list_item = document.createElement('li');
+    var icon = document.createElement('i');
+    var title = document.createElement('span');
+    var content_text = document.createElement('p');
+    var time_text = document.createElement('div');
+    list_item.className = "collection-item avatar";
+    icon.className = "material-icons circle";
+    title.className = "title";
+    icon.innerHTML = "face";
+    title.innerHTML = name;
+    content_text.innerHTML = text;
+    time_text.innerHTML = new Date(time*1000);
+    list_item.appendChild(icon);
+    list_item.appendChild(title);
+    list_item.appendChild(content_text);
+    list_item.appendChild(time_text);
+    tweet_list.appendChild(list_item);
 }
 
 
@@ -144,3 +152,4 @@ function getItemList(num1,isStart){
     });
     }
 }
+
