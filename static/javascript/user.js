@@ -6,9 +6,10 @@ var loadMoreTimestamp;
 var numFromNumberPicker;
 $(document).ready(function(){
     setDefaultDate();
-    loadMoreTimestamp = getTimeStampFromDatePicker();
+    var currenttime = new Date().getTime()/1000;
+    loadMoreTimestamp = currenttime;
     numFromNumberPicker = 25;
-    getItemList(getTimeStampFromDatePicker(),25,false,false);
+    getItemList(currenttime,25,false,false);
     $(document).scroll(function(){
         scrollEffect();
     });
@@ -40,7 +41,8 @@ $(document).ready(function(){
             Materialize.toast(result.error, 2500, "red");
             Materialize.toast(result.success, 2500, "green");
             if(typeof result.success!=="undefined"){
-                getItemList(getTimeStampFromDatePicker(),numFromNumberPicker,false,false);
+                var currenttime2 = new Date().getTime()/1000;
+                getItemList(currenttime2,numFromNumberPicker,false,false);
             }
         }).fail(function (err) {
             console.error(err);
@@ -61,8 +63,6 @@ $(document).ready(function(){
             url: '/item/'+$('#itemid').val(),
             type: 'get',
         }).done(function (result) {
-            //Materialize.toast(result.error, 2500, "red");
-            //Materialize.toast(result.success, 2500, "green");
             if(result.status === "OK"){
                 removeCollectionItem();
                 var item = result.item;
@@ -119,22 +119,35 @@ function setDefaultDate(){
     document.getElementById("dpicker").value = year+"-"+month+"-"+day;
 }
 
+function setDefaultDate2(date1){
+    var date = date1;
+    var hour = date.getHours();
+    var min = date.getMinutes();
+    var sec = date.getSeconds();
+    if(hour<10){
+        hour = "0"+hour;
+    }
+    if(min<10){
+        min = "0"+min;
+    }
+    if(sec<10){
+        sec = "0"+sec;
+    }
+    document.getElementById("tpicker").value = hour+":"+min+":"+sec;
+}
 
 function getTimeStampFromDatePicker(){
     if(!document.getElementById("dpicker").value){
         setDefaultDate();
     }
+    if(!document.getElementById("tpicker").value){
+        setDefaultDate2(new Date());
+    }
     var list = document.getElementById("dpicker").value.split("-");
+    var list2 = document.getElementById("tpicker").value.split(":");
     var date = new Date(list[0], list[1]-1, list[2]);
-    var today = new Date();
-    var result;
-    if(today.setHours(0,0,0,0) == date.setHours(0,0,0,0)){
-        result = new Date().getTime()/1000;
-    }
-    else{
-        date.setHours(23,59,59,999);
-        result = date.getTime()/1000;
-    }
+    date.setHours(list2[0],list2[1],list2[2],999);
+    var result = date.getTime()/1000;
     return result;
 }
 
