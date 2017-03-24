@@ -1,11 +1,17 @@
 $(document).ready(function(){
-
-var name = document.getElementById("name").innerHTML;
-var text = "This is a Test Tweet. This is a Test Tweet. This is a Test Tweet";
-
-for(var i = 0; i<10; i++){
-    createCollectionItem(name,text);
+var date = new Date();
+var year = date.getFullYear();
+var month = date.getMonth() + 1;
+var day = date.getDate();
+if(day<10){
+    day = "0"+day;
 }
+if(month<10){
+    month = "0"+month;
+}
+document.getElementById("dpicker").value = year+"-"+month+"-"+day;
+
+getItemList(25,true);
 $(document).scroll(function(){
     scrollEffect();
 });
@@ -18,7 +24,6 @@ $('#logout-btn').click(function () {
         dataType: 'json'
     }).done(function (result) {
         Materialize.toast(result.error, 2500, "red");
-        //Materialize.toast(result.success, 2500, "green");
         if(typeof result.success!=="undefined"){
             document.location.href = "/";
         }
@@ -27,6 +32,29 @@ $('#logout-btn').click(function () {
     });
 });
 
+$('#tweet-btn').click(function () {
+    $.ajax({
+        url: '/additem',
+        type: 'post',
+        data: JSON.stringify({content: $('#textarea1').val()}),
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json'
+    }).done(function (result) {
+        Materialize.toast(result.error, 2500, "red");
+        Materialize.toast(result.success, 2500, "green");
+        if(typeof result.success!=="undefined"){
+            getItemList(0,false);
+        }
+    }).fail(function (err) {
+        console.error(err);
+    });
+});
+
+
+
+$('#search-btn').click(function () {
+    getItemList(0,false);
+});
 /*var y_value = $("#textarea-container").offset().top;
 window.alert(y_value);*/
 });
@@ -49,6 +77,32 @@ function createCollectionItem(name,text){
     tweet_list.appendChild(list_item);
 }
 
+function removeCollectionItem(){
+    while(tweet_list.hasChildNodes()){
+        tweet_list.removeChild(tweet_list.lastChild);
+    }
+}
+
+
+function getTimeStamp(){
+    var list = document.getElementById("dpicker").value.split("-");
+    var date = new Date(list[0], list[1]-1, list[2]);
+    var today = new Date();
+    var result = date.getTime()/1000;
+    if(today.setHours(0,0,0,0) == date.setHours(0,0,0,0)){
+        result = new Date().getTime()/1000;
+    }
+    return result;
+}
+
+function iterateItemList(itemlist){
+    //window.alert(itemlist.length);
+    for(var i = 0; i<itemlist.length; i++) {
+        var item = itemlist[i];
+        createCollectionItem(item.username,item.content);
+    }
+}
+
 var top_nav = $("#top-nav");
 function scrollEffect(){
     var y_value = $(document).scrollTop();
@@ -57,5 +111,36 @@ function scrollEffect(){
     }
     else if(top_nav.hasClass("noShadow")){
         top_nav.removeClass("noShadow");
+    }
+}
+
+
+function getItemList(num1,isStart){
+    var num= parseInt(document.getElementById("npicker").value);
+    if(isStart){
+        num = num1;
+    }
+    if(num<1 || num>100 || !Number.isInteger(num)){
+        Materialize.toast("invalid input", 2500, "red");
+    }
+    else{
+    var result = getTimeStamp();
+    $.ajax({
+        url: '/search',
+        type: 'post',
+        data: JSON.stringify({timestamp: result, limit: num}),
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json'
+    }).done(function (result) {
+        Materialize.toast(result.error, 2500, "red");
+        //Materialize.toast(result.status, 2500, "green");
+        removeCollectionItem();
+        if(result.status === "OK"){
+            var itemlist = result.items;
+            iterateItemList(itemlist);
+        }
+    }).fail(function (err) {
+        console.error(err);
+    });
     }
 }

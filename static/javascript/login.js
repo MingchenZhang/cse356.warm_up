@@ -10,8 +10,7 @@ $('#login-btn').click(function () {
         Materialize.toast(result.error, 2500, "red");
         //Materialize.toast(result.success, 2500, "green");
         if(typeof result.success!=="undefined"){
-            var form = document.getElementById("login-form");
-            form.submit();
+            location.reload();
         }
     }).fail(function (err) {
         console.error(err);
