@@ -24,7 +24,7 @@ exports.getRoute = function (s) {
                     NodeMailer.close();
                     if (error) {
                         console.error(error);
-                        reject();
+                        reject(error);
                     } else {
                         resolve(email);
                     }
