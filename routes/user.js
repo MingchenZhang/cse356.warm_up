@@ -15,13 +15,13 @@ exports.getRoute = function (s) {
 
         function sendValidationEmail(email) {
             return new When.promise(function (resolve, reject) {
-                NodeMailer.sendMail({
+                s.emailTransport.sendMail({
                     from: "noreply@stonybrook.edu",
                     to: req.body.email,
                     subject: "register link to fake twitter",
                     text: "visit this link to register: http://130.245.168.102/verify?key="+email.validationToken
                 }, function (error, info) {
-                    NodeMailer.close();
+                    //s.emailTransport.close();
                     if (error) {
                         console.error(error);
                         reject(error);
@@ -33,7 +33,7 @@ exports.getRoute = function (s) {
         }
         
         s.userConn.createUser({email: req.body.email, username:req.body.username, password: req.body.password})
-            .then(sendValidationEmail)
+            //.then(sendValidationEmail)
             .then(function (result) {
                 return res.status(200).send({status: 'OK', success: 'account created'});
             })

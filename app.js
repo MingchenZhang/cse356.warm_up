@@ -5,6 +5,7 @@ var Mongodb = require('mongodb');
 var Cluster = require('cluster');
 var When = require('when');
 var Ejs = require('ejs');
+var NodeMailer = require('nodemailer');
 var BodyParser = require('body-parser');
 
 if (Cluster.isMaster) {
@@ -31,6 +32,8 @@ if (Cluster.isMaster) {
     };
 
     var startupPromises = []; // wait for all initialization to finish
+
+    s.emailTransport = NodeMailer.createTransport();
 
     // DB initialization ---------------------------
     s.userConn = require('./database/user_db');
