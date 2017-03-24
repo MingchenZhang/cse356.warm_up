@@ -58,7 +58,7 @@ exports.getRoute = function (s) {
         res.render('adduser', {});
     });
 
-    router.get('/verify', function (req, res, next) {
+    router.get('/verify_interact', function (req, res, next) {
         res.render('verify', {});
     });
 

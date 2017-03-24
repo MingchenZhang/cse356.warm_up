@@ -5,6 +5,7 @@ var Mongodb = require('mongodb');
 var Cluster = require('cluster');
 var When = require('when');
 var Ejs = require('ejs');
+var NodeMailer = require('nodemailer');
 var BodyParser = require('body-parser');
 
 if (Cluster.isMaster) {
@@ -41,6 +42,14 @@ if (Cluster.isMaster) {
     s.logConn.initDatabase(s, startupPromises);
     s.tweetConn = require('./database/tweet');
     s.tweetConn.initDatabase(s, startupPromises);
+
+    s.emailTransporter = NodeMailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'cse308.zhang.mingchen@gmail.com',
+            pass: 'QeoZn3oLzDbW7BchZgqenW3zACdn'
+        }
+    });
 
     // web server initialization
     var app = Express();

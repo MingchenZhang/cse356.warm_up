@@ -11,13 +11,34 @@ exports.getRoute = function (s) {
     router.post('/adduser', jsonParser, function (req, res, next) {
         if(!s.tools.isAllString(req.body))
             return res.status(200).send({status: 'ERROR', error: 'format error'});
+
+        function sendValidationEmail(email) {
+            return new When.promise(function (resolve, reject) {
+                s.emailTransporter.sendMail({
+                    from: "mingczhang@cs.stonybrook.edu",
+                    to: req.body.email,
+                    subject: "register link to fake twitter",
+                    html: "visit this link to register: http://130.245.168.102/verify?key="+email.validationToken,
+                    text: "visit this link to register: http://130.245.168.102/verify?key="+email.validationToken
+                }, function (error, info) {
+                    //s.emailTransport.close();
+                    if (error) {
+                        console.error(error);
+                        reject(error);
+                    } else {
+                        resolve(email);
+                    }
+                });
+            });
+        }
         
         s.userConn.createUser({email: req.body.email, username:req.body.username, password: req.body.password})
+            .then(sendValidationEmail)
             .then(function (result) {
                 return res.status(200).send({status: 'OK', success: 'account created'});
             })
             .catch(function (err) {
-                return res.status(200).send(err);
+                return res.status(400).send(err);
             });
     });
 
