@@ -48,7 +48,7 @@ $(document).ready(function(){
             if(result.status === "OK"){
                 removeCollectionItem();
                 var item = result.item;
-                createCollectionItem(item.username,item.content,item.timestamp);
+                createCollectionItem(item.username,item.content,item.timestamp,item.id);
                 $("#loadmore-btn").hide();
             }
         }).fail(function (err) {
@@ -155,20 +155,21 @@ function removeCollectionItem(){
 function iterateItemList(itemlist){
     for(var i = 0; i<itemlist.length; i++) {
         var item = itemlist[i];
-        createCollectionItem(item.username,item.content,item.timestamp);
+        createCollectionItem(item.username,item.content,item.timestamp,item.id);
         if(i==itemlist.length-1){
             loadMoreTimestamp = item.timestamp;
         }
     }
 }
 
-function createCollectionItem(name,text,time){
+function createCollectionItem(name,text,time,id){
     var tweet_list = document.getElementById("tweet-collection");
     var list_item = document.createElement('li');
     var icon = document.createElement('i');
     var title = document.createElement('span');
     var content_text = document.createElement('p');
     var time_text = document.createElement('span');
+    var id_text = document.createElement('span');
     list_item.className = "collection-item avatar";
     icon.className = "material-icons circle";
     title.className = "title";
@@ -176,11 +177,13 @@ function createCollectionItem(name,text,time){
     icon.innerHTML = "face";
     title.innerHTML = name;
     content_text.innerHTML = text;
+    id_text.innerHTML = "ID: "+id;
     time_text.innerHTML = new Date(time*1000).toLocaleString();
     list_item.appendChild(icon);
     list_item.appendChild(title);
     list_item.appendChild(content_text);
     list_item.appendChild(time_text);
+    list_item.appendChild(id_text);
     tweet_list.appendChild(list_item);
 }
 
