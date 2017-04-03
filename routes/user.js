@@ -103,10 +103,18 @@ exports.getRoute = function (s) {
                 return res.status(200).send(err);
             });
     });
-
+    router.get('/following', urlParser, function (req, res, next) {
+        res.render('following', {username: req.userLoginInfo.info.username});
+    });
+    router.get('/followers', urlParser, function (req, res, next) {
+        res.render('followers', {username: req.userLoginInfo.info.username});
+    });
+    router.get('/manage', urlParser, function (req, res, next) {
+        res.render('manage', {username: req.userLoginInfo.info.username});
+    });
     router.get('/user', urlParser, function (req, res, next) {
         res.render('user', {username: req.userLoginInfo.info.username});
     });
-
+    
     return router;
 };
