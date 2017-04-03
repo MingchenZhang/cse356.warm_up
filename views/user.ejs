@@ -32,33 +32,63 @@
 </section>
 
 <ul class="tabs">
-<li class="tab"><a href="#tweets" class="active">Tweets</a></li>
-<li class="tab"><a href="#following">Following</a></li>
-<li class="tab"><a href="#followers">Followers</a></li>
+<li class="tab"><a target="_self" href="/user" class="active">Tweets</a></li>
+<li class="tab"><a target="_self" href="/following">Following | Followers</a></li>
+<li class="tab"><a target="_self" href="/manage">Find | Follow</a></li>
 </ul>
 
 
 <div id="tweets" class="col s12">
 <div class="container row">
 <div class="col s12 m5 l4">
-	<div class="content-left"><center>	
-	<textarea id="textarea1" placeholder="Post a New Tweet..."></textarea>
-	<div><button class="btn blue darken-1" type="button" id="tweet-btn">Submit</button></div>
-	Pick a Date:
-	<input type="date" id="dpicker" class="datepicker">
-	Pick a Time:
-	<input type="time" id="tpicker" class="timepicker" step="1">
-	Pick a Number:
-	<input type="number" id="npicker" name="quantity" min="1" max="100" value="25">
-	<button class="btn blue darken-1" type="button" id="search-btn">Submit</button>
-	<div>Enter a Tweet Id:</div>
-	
-	<input type="text" id="itemid">
-	<button class="btn blue darken-1" type="button" id="search2-btn">Submit</button>
+	<div class="content-left"><center>
+
+	<ul class="collapsible" data-collapsible="expandable">
+	<li>
+	<div class="collapsible-header active"><i class="material-icons">chevron_right</i>Post New Tweets</div>
+	<div class="collapsible-body">
+		<textarea id="textarea1" placeholder="Post a New Tweet..."></textarea>
+		<div><button class="btn blue darken-1" type="button" id="tweet-btn">Submit</button></div>
+	</div>
+	</li>
+	<li>
+	<div class="collapsible-header"><i class="material-icons">chevron_right</i>Search Tweets</div>
+	<div class="collapsible-body">
+		<table>
+	    <tr><td>Date: </td><td><input type="date" id="dpicker" class="datepicker"></td></tr>
+	    <tr><td>Time: </td><td><input type="time" id="tpicker" class="timepicker" step="1"></td></tr>
+	    <tr><td># of tweets: </td><td><input type="number" id="npicker" name="quantity" min="1" max="100" value="25"></td></tr>
+	    <tr><td>Query: </td><td><input type="text" id="querypicker"></td></tr>
+	    <tr><td>Username: </td><td><input type="text" id="usernamepicker"></td></tr>
+	    </table>
+	    <div><input type="checkbox" class="filled-in" id="following-checkbox" checked="checked"/><label for="following-checkbox" id="following-label">Following Only</label></div>
+		<button class="btn blue darken-1" type="button" id="search-btn">Submit</button>
+	</div>
+	</li>
+	<li>
+	<div class="collapsible-header"><i class="material-icons">chevron_right</i>Find Tweet By ID</div>
+	<div class="collapsible-body">
+		<table>
+	    <tr><td>Tweet ID: </td><td><input type="text" id="itemid"></td></tr>
+	    </table>
+		<button class="btn blue darken-1" type="button" id="search2-btn">Submit</button>
+	</div>
+	</li>
+	<li>
+	<div class="collapsible-header"><i class="material-icons">chevron_right</i>Delete Tweet By ID</div>
+	<div class="collapsible-body">
+		<table>
+	    <tr><td>Tweet ID: </td><td><input type="text" id="itemiddelete"></td></tr>
+	    </table>
+		<button class="btn blue darken-1" type="button" id="deletebyid-btn">Submit</button>
+	</div>
+	</li>
+	</ul>
+
 	</center></div>
 </div>
 
-<div id="" class="col s12 m7 l8">
+<div class="col s12 m7 l8">
 	<div class="content-right"><center>
 	<ul id="tweet-collection" class="collection">
 	</ul>
@@ -68,13 +98,12 @@
 <button class="btn blue darken-1" type="button" id="loadmore-btn">Load More</button>
 </div>
 
-<div id="following" class="col s12">Following</div>
-<div id="followers" class="col s12">Followers</div>
 </center>
 
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
 <script src="static/javascript/user.js"></script>
+<script src="static/javascript/tweets.js"></script>
 </body>
 </html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A Twitter clone developed by Mingchen Zhang and Haozhi Qu">
+    <meta name="author" content="Mingchen Zhang and Haozhi Qu">
+	<title>Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="static/css/user.css">
+</head>
+
+
+<body>
+
+<nav id="top-nav" class="noShadow">
+<div class="nav-wrapper container">
+	<a href="#" class="nav-logo">Test</a>
+	<ul class="right">
+	<li><button class="btn blue darken-1" type="button" id="logout-btn">logout</button></li>
+	</ul>
+</div>
+</nav>
+
+<center>
+<section class="top-section">
+	<i class="photo material-icons">face</i>
+	<div id="name"><%=username%></div>
+</section>
+
+<ul class="tabs">
+<li class="tab"><a target="_self" href="/user">Tweets</a></li>
+<li class="tab"><a target="_self" href="/following">Following | Followers</a></li>
+<li class="tab"><a target="_self" href="/manage" class="active">Find | Follow</a></li>
+</ul>
+
+
+<div id="manage" class="col s12">
+	<div class="container row">
+		<div class="col s12 m5 l4">
+		<div class="content-left"><center>
+			<ul class="collapsible" data-collapsible="expandable">
+			<li>
+				<div class="collapsible-header active"><i class="material-icons">chevron_right</i>Find User</div>
+				<div class="collapsible-body">
+				<table>
+				<tr><td>Username: </td><td><input type="text" id="username2"></td></tr>
+				</table>
+				<button class="btn blue darken-1" type="button" id="finduser-btn">Submit</button>
+				</div>
+			</li>
+			<li>
+				<div class="collapsible-header"><i class="material-icons">chevron_right</i>Follow User</div>
+				<div class="collapsible-body">
+				<table>
+				<tr><td>Username: </td><td><input type="text" id="username3"></td></tr>
+				</table>
+				<button class="btn blue darken-1" type="button" id="follow-btn">Submit</button>
+				</div>
+			</li>
+			<li>
+				<div class="collapsible-header"><i class="material-icons">chevron_right</i>Unfollow User</div>
+				<div class="collapsible-body">
+				<table>
+				<tr><td>Username: </td><td><input type="text" id="username4"></td></tr>
+				</table>
+				<button class="btn blue darken-1" type="button" id="unfollow-btn">Submit</button>
+				</div>
+			</li>
+			</ul>
+		</center></div>
+		</div>
+		<div class="col s12 m7 l8">
+		<div class="content-right"><center>
+
+		<div class="card horizontal blue darken-1">
+			<div class="card-image valign-wrapper"><i class="photo2 material-icons">face</i></div>
+		<div class="card-stacked">
+		<div class="card-content">
+		<span class="card-title">Username</span>
+		<table>
+			<tr><td id="manage-email">Email: </td><td></td></tr>
+			<tr><td id="manage-following"># of Following: </td><td></td></tr>
+			<tr><td id="manage-followers"># of Followers: </td><td></td></tr>
+		</table>
+		</div>
+		</div>
+		</div>
+		</center></div>
+		</div>
+	</div>
+</div>
+</center>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+<script src="static/javascript/user.js"></script>
+<script src="static/javascript/manage.js"></script>
+</body>
+</html>

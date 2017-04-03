@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A Twitter clone developed by Mingchen Zhang and Haozhi Qu">
+    <meta name="author" content="Mingchen Zhang and Haozhi Qu">
+	<title>Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="static/css/user.css">
+</head>
+
+
+<body>
+
+<nav id="top-nav" class="noShadow">
+<div class="nav-wrapper container">
+	<a href="#" class="nav-logo">Test</a>
+	<ul class="right">
+	<li><button class="btn blue darken-1" type="button" id="logout-btn">logout</button></li>
+	</ul>
+</div>
+</nav>
+
+<center>
+<section class="top-section">
+	<i class="photo material-icons">face</i>
+	<div id="name"><%=username%></div>
+</section>
+
+<ul class="tabs">
+<li class="tab"><a target="_self" href="/user">Tweets</a></li>
+<li class="tab"><a target="_self" href="/following" class="active">Following | Followers</a></li>
+<li class="tab"><a target="_self" href="/manage">Find | Follow</a></li>
+</ul>
+
+
+<div id="following" class="col s12">
+	<div class="container row"><center>
+	<ul class="tabs tabs2">
+	<li class="tab tab2"><a target="_self" href="/following" class="active">Following</a></li>
+	<li class="tab tab2"><a target="_self" href="/followers">Followers</a></li>
+	</ul>
+	Limit: 
+	<input type="number" id="limit" class="follow-limit" name="quantity" min="1" max="200" value="50">
+	<button class="btn blue darken-1" type="button" id="limit-btn">Submit</button>
+	<ul id="following-collection" class="follow-collection collection">
+	</ul>
+	</center></div>
+</div>
+
+</center>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+<script src="static/javascript/user.js"></script>
+<script src="static/javascript/following.js"></script>
+</body>
+</html>
