@@ -61,6 +61,8 @@ $(document).ready(function(){
     });
 
     $('#deletebyid-btn').click(function () {
+        var ttemp = document.getElementById("tpicker").value;
+        window.alert(ttemp);
         /*$.ajax({
             url: '/item/'+$('#itemiddelete').val(),
             type: 'delete',
@@ -72,14 +74,14 @@ $(document).ready(function(){
         }).fail(function (err) {
             console.error(err);
         });*/
-        var uname1 = document.getElementById("usernamepicker").value;
+        /*var uname1 = document.getElementById("usernamepicker").value;
         var query1 = document.getElementById("querypicker").value;
         if(!uname1 && !query1){
             window.alert(uname1);
             window.alert(query1);
         }
         window.alert(uname1);
-        window.alert(query1);
+        window.alert(query1);*/
     });
 
     $('.datepicker').pickadate({
@@ -91,6 +93,12 @@ $(document).ready(function(){
             $('.datepicker').blur();
             $('.picker').blur();
         }
+    });
+
+    $('#tpicker').pickatime({
+        autoclose: false,
+        twelvehour: true,
+        ampmclickable: false,
     });
 /*var y_value = $("#textarea-container").offset().top;
 window.alert(y_value);*/
@@ -128,6 +136,21 @@ function getDefaultTime(date1){
     return t;
 }
 
+function convertAMPMTime(time1){
+    var part1 = time1.slice(0,5);
+    var part2 = time1.slice(5,7);
+    var part1 = part1.split(":");
+    var hour = parseInt(part1[0]);
+    var min = part1[1];
+    if(part2 === "PM"){
+        hour = hour+12;
+    }
+    if(hour<10){
+        hour = "0"+hour;
+    }
+    return hour+":"+min;
+}
+
 function getTimeStampFromDatePicker(){
     if(!document.getElementById("dpicker").value){
         setDefaultDate();
@@ -136,10 +159,14 @@ function getTimeStampFromDatePicker(){
     if(!list2){
         list2 = getDefaultTime(new Date());
     }
+    else{
+        list2 = convertAMPMTime(list2);
+        window.alert(list2);
+    }
     var list = document.getElementById("dpicker").value.split("-");
     list2 = list2.split(":");
     var date = new Date(list[0], list[1]-1, list[2]);
-    date.setHours(list2[0],list2[1],list2[2],999);
+    date.setHours(list2[0],list2[1],59,999);
     var result = date.getTime()/1000;
     return result;
 }
