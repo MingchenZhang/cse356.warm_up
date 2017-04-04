@@ -104,20 +104,26 @@ exports.searchTweet = function(param){
     if (param.beforeDate) var beforeDate = new Date(param.beforeDate);
     var limitDoc = 25;
     if(typeof param.limitDoc == 'number' && param.limitDoc<=100 && param.limitDoc>0 ) limitDoc = param.limitDoc;
+    var userIDList = param.userIDList; // filter by userID array
+    var searchText = param.searchText;
 
-    function getTweetArray() {
-        return new When.promise(function (resolve, reject) {
-            var query = {};
-            if(param.beforeDate) query.createdAt = {$lte: beforeDate};
-            tweetDB.tweetColl.find(query).sort({createdAt:-1}).limit(limitDoc).toArray(function (err, array) {
-                if(err) {
-                    reject({error: err});
-                }else{
-                    resolve(array);
-                }
-            });
-        });
+    var resolveFunction;
+    var query = {};
+    if(!userIDList || userIDList.length == 0){}else{
+        query.postedBy = {$in: userIDList};
     }
+    if(searchText) query.$text = {$search: searchText};
+    resolveFunction = function (resolve, reject) {
+        var query = {};
+        if(param.beforeDate) query.createdAt = {$lte: beforeDate};
+        tweetDB.tweetColl.find(query).sort({createdAt:-1}).limit(limitDoc).toArray(function (err, array) {
+            if(err) {
+                reject({error: err});
+            }else{
+                resolve(array);
+            }
+        });
+    };
 
-    return getTweetArray();
+    return new Promise(resolveFunction);
 };

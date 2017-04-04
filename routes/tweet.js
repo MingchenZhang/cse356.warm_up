@@ -58,8 +58,25 @@ exports.getRoute = function (s) {
         if(req.body.timestamp) searchCondition.beforeDate = new Date(req.body.timestamp*1000+999);
         searchCondition.limitDoc = req.body.limit;
 
+        var prequeryPromise;
+        if(req.body.following){
+            prequeryPromise = s.userConn.listFollower({follower: req.userLoginInfo.userID}).then((followedList)=>{
+                searchCondition.userIDList = followedList.map((e)=>{return e.followed});
+            });
+        }else if(typeof req.body.username == 'string'){
+            prequeryPromise = s.userConn.getUserBasicInfoByUsername({username: req.body.username}).then((userInfo)=>{
+                searchCondition.userIDList = [userInfo._id];
+            });
+        }
+
+        if(typeof req.body.q == 'string') {
+            searchCondition.searchText = req.body.q;
+        }
+
         var resultList = [];
-        s.tweetConn.searchTweet(searchCondition).then((tweetArray)=>{
+        prequeryPromise.then(()=>{
+            return s.tweetConn.searchTweet(searchCondition);
+        }).then((tweetArray)=>{
             var userInfoRetrivalPromises = [];
             for(let i=0; i<tweetArray.length; i++) {
                 let index = i;
