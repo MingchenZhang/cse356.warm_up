@@ -62,7 +62,7 @@ $(document).ready(function(){
 
     $('#deletebyid-btn').click(function () {
         var ttemp = document.getElementById("tpicker").value;
-        window.alert(ttemp);
+        //window.alert(ttemp);
         /*$.ajax({
             url: '/item/'+$('#itemiddelete').val(),
             type: 'delete',
@@ -161,7 +161,6 @@ function getTimeStampFromDatePicker(){
     }
     else{
         list2 = convertAMPMTime(list2);
-        window.alert(list2);
     }
     var list = document.getElementById("dpicker").value.split("-");
     list2 = list2.split(":");

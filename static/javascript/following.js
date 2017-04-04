@@ -8,6 +8,7 @@ $(document).ready(function(){
         createCollectionItemFollowing("1",true);
     }
     $('#limit-btn').click(function () {
+        //getItemListFollowing();
         window.alert(3333);
     });
 });
