@@ -9,7 +9,7 @@ exports.getRoute = function (s) {
     var jsonParser = BodyParser.json({limit: '10kb'});
 
     router.post('/adduser', jsonParser, function (req, res, next) {
-        if(!s.tools.isAllString(req.body))
+        if (!s.tools.isAllString(req.body))
             return res.status(200).send({status: 'ERROR', error: 'format error'});
 
         function sendValidationEmail(email) {
@@ -18,8 +18,8 @@ exports.getRoute = function (s) {
                     from: "mingczhang@cs.stonybrook.edu",
                     to: req.body.email,
                     subject: "register link to fake twitter",
-                    html: "visit this link to register: http://130.245.168.102/verify?key="+email.validationToken,
-                    text: "visit this link to register: http://130.245.168.102/verify?key="+email.validationToken
+                    html: "visit this link to register: http://130.245.168.102/verify?key=" + email.validationToken,
+                    text: "visit this link to register: http://130.245.168.102/verify?key=" + email.validationToken
                 }, function (error, info) {
                     //s.emailTransport.close();
                     if (error) {
@@ -31,8 +31,8 @@ exports.getRoute = function (s) {
                 });
             });
         }
-        
-        s.userConn.createUser({email: req.body.email, username:req.body.username, password: req.body.password})
+
+        s.userConn.createUser({email: req.body.email, username: req.body.username, password: req.body.password})
             .then(sendValidationEmail)
             .then(function (result) {
                 return res.status(200).send({status: 'OK', success: 'account created'});
@@ -43,13 +43,13 @@ exports.getRoute = function (s) {
     });
 
     router.get('/verify', urlParser, function (req, res, next) {
-        if(!s.tools.isAllString(req.query))
+        if (!s.tools.isAllString(req.query))
             return res.status(200).send({status: 'ERROR', error: 'format error'});
 
         var promise = null;
-        if(req.query.key == 'abracadabra'){
+        if (req.query.key == 'abracadabra') {
             promise = s.userConn.emailVerifyDirectly({email: req.query.email});
-        }else{
+        } else {
             promise = s.userConn.emailVerify({token: req.query.key});
         }
 
@@ -61,16 +61,16 @@ exports.getRoute = function (s) {
     });
 
     router.post('/verify', jsonParser, function (req, res, next) {
-        if(!s.tools.isAllString(req.body))
+        if (!s.tools.isAllString(req.body))
             return res.status(200).send({status: 'ERROR', error: 'format error'});
-        
+
         var promise = null;
-        if(req.body.key == 'abracadabra'){
+        if (req.body.key == 'abracadabra') {
             promise = s.userConn.emailVerifyDirectly({email: req.body.email});
-        }else{
+        } else {
             promise = s.userConn.emailVerify({token: req.body.key});
         }
-        
+
         promise.then(function (result) {
             return res.status(200).send({status: 'OK', success: 'account verified'});
         }).catch(function (err) {
@@ -79,20 +79,24 @@ exports.getRoute = function (s) {
     });
 
     router.post('/login', jsonParser, function (req, res, next) {
-        if(!s.tools.isAllString(req.query))
+        if (!s.tools.isAllString(req.query))
             return res.status(200).send({status: 'ERROR', error: 'format error'});
-        
+
         s.userConn.userLogin({username: req.body.username, password: req.body.password})
             .then(function (session) {
                 res.cookie('login_session', session.sessionToken,
-                    {httpOnly: true, secure: !!s.inProduction, expires: (new Date(Date.now() + 180*24*3600*1000))});
+                    {
+                        httpOnly: true,
+                        secure: !!s.inProduction,
+                        expires: (new Date(Date.now() + 180 * 24 * 3600 * 1000))
+                    });
                 return res.status(200).send({status: 'OK', success: 'logged in'});
             })
             .catch(function (err) {
                 return res.status(200).send(err);
             });
     });
-    
+
     router.all('/logout', function (req, res, next) {
         s.userConn.logoutSession({sessionToken: req.userLoginInfo.sessionToken})
             .then(function (result) {
@@ -115,6 +119,90 @@ exports.getRoute = function (s) {
     router.get('/user', urlParser, function (req, res, next) {
         res.render('user', {username: req.userLoginInfo.info.username});
     });
-    
+
+    router.post('/follow', jsonParser, function (req, res, next) {
+        if (!req.userLoginInfo)
+            return res.status(401).send({status: 'error', error: 'login first'});
+        s.userConn.getUserBasicInfoByUsername({username: req.body.username}).then((userInfo)=> {
+            if (req.body.follow) {
+                return s.userConn.follow({follower: req.userLoginInfo.userID, followed: userInfo._id});
+            } else {
+                return s.userConn.unfollow({follower: req.userLoginInfo.userID, followed: userInfo._id});
+            }
+        }).then(()=> {
+            return res.status(200).send({status: 'OK'});
+        }).catch((err)=> {
+            return res.status(400).send({status: 'error', error: err});
+        });
+    });
+
+    router.get('/user/:username/followers', function (req, res, next) {
+        var requestUser;
+        var resultList = [];
+        s.userConn.getUserBasicInfoByUsername({username: req.params.username}).then((user)=>{
+            requestUser = user;
+            return s.userConn.listFollower(user._id);
+        }).then((follower)=>{
+            var resultPromise = [];
+            for(let i=0; i<follower.length; i++){
+                let index = i;
+                let promise = s.userConn.getUserBasicInfo({userID: follower[i].follower}).then((follower)=>{
+                    resultList[index] = follower.username;
+                });
+                resultList.push(promise);
+            }
+            return When.all(resultPromise);
+        }).then(()=>{
+            res.send({status: 'OK', users: resultList});
+        }).catch((err)=>{
+            res.status(400).send({status: 'error', error: err});
+        });
+    });
+
+    router.get('/user/:username/following', function (req, res, next) {
+        var requestUser;
+        var resultList = [];
+        s.userConn.getUserBasicInfoByUsername({username: req.params.username}).then((user)=>{
+            requestUser = user;
+            return s.userConn.listFollowed(user._id);
+        }).then((followed)=>{
+            var resultPromise = [];
+            for(let i=0; i<followed.length; i++){
+                let index = i;
+                let promise = s.userConn.getUserBasicInfo({userID: followed[i].follower}).then((followed)=>{
+                    resultList[index] = followed.username;
+                });
+                resultList.push(promise);
+            }
+            return When.all(resultPromise);
+        }).then(()=>{
+            res.send({status: 'OK', users: resultList});
+        }).catch((err)=>{
+            res.status(400).send({status: 'error', error: err});
+        });
+    });
+
+    router.get('/user/:username', function (req, res, next) {
+        var userInfo;
+        var followedList;
+        var followerList;
+        s.userConn.getUserBasicInfoByUsername({username: req.params.username}).then((user)=>{
+            userInfo = user;
+            return s.userConn.listFollowed(userInfo._id);
+        }).then((followed)=>{
+            followedList = followed;
+            return s.userConn.listFollower(userInfo._id);// TODO: use count instead
+        }).then((follower)=>{
+            followerList = follower;
+            return res.status(200).send({
+                status: 'OK',
+                user: {email:userInfo.email, followers:followerList.length, following: followedList.length}
+            });
+        }).catch((err)=>{
+            return res.status(400).send({status: 'error', error: err});
+        });
+
+    });
+
     return router;
 };

@@ -25,6 +25,8 @@ exports.initDatabase = function (singleton, readyList) {
 
                 userDB.userBasicColl = db.collection('basic_info');
 
+                userDB.followColl = db.collection('follow');
+
                 userDB.userEmailVeriColl = db.collection('email_pending_list');
 
                 userDB.userForgetPassColl = db.collection('password_recovery_list');
@@ -338,3 +340,57 @@ exports.getUserBasicInfo = function(param){
 
     return getUserBasic();
 };
+
+exports.getUserBasicInfoByUsername = function(param){
+    var username = param.username;
+
+    function getUserBasic(value) {
+        return new When.promise(function (resolve, reject) {
+            userDB.userBasicColl.findOne({username}, function (err, result) {
+                if(err) return reject({status: 'ERROR', error: 'database error'});
+                if(result !== null) {
+                    return resolve(result);
+                }else{
+                    return reject({status: 'ERROR', error: 'account not found'});
+                }
+            });
+        });
+    }
+
+    return getUserBasic();
+};
+
+exports.follow = function (param) {
+    var follower = s.mongodb.ObjectId(param.follower);
+    var followed = s.mongodb.ObjectId(param.followed);// both are ID
+
+    // return userDB.followColl.count({follower, followed}).then((count)=>{
+    //     if(count == 0) return userDB.followColl.insertOne({follower, followed});
+    //     else throw new {error:"followed already"};
+    // });
+    return userDB.followColl.findOneAndUpdate({follower, followed}, {follower, followed}, {upsert: true});
+};
+
+exports.unfollow = function(){
+    var follower = s.mongodb.ObjectId(param.follower);
+    var followed = s.mongodb.ObjectId(param.followed);// both are ID
+
+    return userDB.followColl.deleteMany({follower, followed});
+};
+
+exports.listFollowed = function (param) {
+    var follower = s.mongodb.ObjectId(param.follower);
+    var limit = param.limit;
+
+    if(typeof limit == 'number') return userDB.followColl.find({follower}).limit(limit).toArray();
+    else return userDB.followColl.find({follower}).limit(200).toArray();
+};
+
+exports.listFollower = function (param) {
+    var followed = s.mongodb.ObjectId(param.followed);
+    var limit = parseInt(param.limit);
+
+    if(typeof limit == 'number') return userDB.followColl.find({followed}).limit(limit).toArray();
+    else return userDB.followColl.find({followed}).limit(200).toArray();
+};
+

@@ -42,6 +42,17 @@ exports.getRoute = function (s) {
             });
     });
 
+    router.delete('/item/:id', function (req, res, next) {
+        var tweetDoc = null;
+        s.tweetConn.deleteTweet({id: req.params.id})
+            .then(()=>{
+                return res.status(200).send({status: 'OK'});
+            })
+            .catch((err)=>{
+                return res.status(400).send({status: 'error', error: err.result});
+            });
+    });
+
     router.post('/search', jsonParser, function (req, res, next) {
         var searchCondition = {};
         if(req.body.timestamp) searchCondition.beforeDate = new Date(req.body.timestamp*1000+999);

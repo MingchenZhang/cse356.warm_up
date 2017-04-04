@@ -82,6 +82,24 @@ exports.getTweet = function(param){
     return getTweetDoc();
 };
 
+exports.deleteTweet = function(param){
+    var id = s.mongodb.ObjectId(param.id);
+
+    function deleteTweetDoc(value) {
+        return new When.promise(function (resolve, reject) {
+            tweetDB.tweetColl.deleteOne({_id: id}, function (err, result) {
+                if(err) return reject({error: 'database error'});
+                if(result.result.n == 1) {
+                    return resolve(result);
+                }
+                else return reject({error: 'tweet not found'});
+            });
+        });
+    }
+
+    return deleteTweetDoc();
+};
+
 exports.searchTweet = function(param){
     if (param.beforeDate) var beforeDate = new Date(param.beforeDate);
     var limitDoc = 25;
