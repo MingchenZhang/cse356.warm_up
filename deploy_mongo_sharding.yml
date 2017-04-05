@@ -1,26 +1,40 @@
 ---
-- hosts: project2
+- hosts: recilive
   become: yes
   become_method: sudo
   vars:
-    project_name: cse356.warm_up
+    project_name: cse308.recilive
     http_port: 80
-    DB_PORT: 27017
+    DB_PORT: 3434
+    systemd_config_nodejs_name: nodejs_server_for_{{project_name}}.service
+    systemd_config_mongodb_name: mongodb_server_for_{{project_name}}.service
     systemd_config_nodejs: |
         [Unit]
-        Description=simple nodejs server
+        Description=nodejs server for {{project_name}}
+        Requires={{systemd_config_mongodb_name}}
 
         [Service]
         User=root
         Group=root
         WorkingDirectory=/var/node/{{project_name}}/
-        Environment=HTTP_PORT=80
+        Environment=HTTP_PORT={{http_port}}a
         Environment=DB_PATH=mongodb://localhost:{{DB_PORT}}/
         ExecStart=/usr/bin/node app.js
 
         [Install]
         WantedBy=multi-user.target
-  
+    systemd_config_mongodb: |
+        [Unit]
+        Description=mongodb server for {{project_name}}
+
+        [Service]
+        User=root
+        Group=root
+        ExecStart=/usr/bin/mongod --bind_ip 127.0.0.1 --dbpath /var/mongodb/{{project_name}} --port {{DB_PORT}}
+
+        [Install]
+        WantedBy=multi-user.target
+
   gather_facts: no
   pre_tasks:
   - name: install python2
@@ -48,9 +62,9 @@
     register: has_mongodb_server
   - include: install_mongodb_server.yml
     when: has_mongodb_server|failed
-  
+
   - name: create folder for website resources
-    file: 
+    file:
       path: /var/node/{{project_name}}/
       state: directory
       recurse: yes
@@ -61,36 +75,38 @@
     unarchive:
       src: archive.tar.gz
       dest: /var/node/{{project_name}}/
-      
+
   - name: create folder for mongodb
     file:
       path: /var/mongodb/{{project_name}}
       state: directory
-  
+
   - name: write systemd config to auto run nodejs
     copy:
       content: "{{ systemd_config_nodejs }}"
-      dest: /etc/systemd/system/simple_nodejs_server.service
-  - name: enable the service
-    command: systemctl enable simple_nodejs_server.service
-  
-#  - name: write systemd config to auto run mongodb
-#    copy:
-#      content: "{{ systemd_config_mongodb }}"
-#      dest: /etc/systemd/system/simple_mongodb_server.service
-#  - name: enable the service
-#    command: systemctl enable simple_mongodb_server.service
-  
+      dest: /etc/systemd/system/{{ systemd_config_nodejs_name }}
+
+  - name: enable nodejs service
+    command: systemctl enable {{systemd_config_nodejs_name}}
+
+  - name: write systemd config to auto run mongodb
+    copy:
+      content: "{{ systemd_config_mongodb }}"
+      dest: /etc/systemd/system/{{ systemd_config_mongodb_name }}
+
+  - name: enable mongodb service
+    command: systemctl enable {{systemd_config_mongodb_name}}
+
   - name: start the nodejs service
-    command: systemctl restart simple_nodejs_server.service
-  
+    command: systemctl restart {{systemd_config_nodejs_name}}
+
   - name: pause 5 seconds
     pause:
       seconds: 5
-      
-  
+
+
   - name: get nodejs status
-    command: systemctl status simple_nodejs_server.service -n30
+    command: systemctl status {{systemd_config_nodejs_name}} -n30
     register: node_status
   - debug: msg="{{ node_status.stdout }}"
   - debug: msg="{{ node_status.stderr }}"
