@@ -128,7 +128,7 @@ exports.createUser = function(param){
                 new: true
             }, function (err, result) {
                 if (!err) {
-                    resolve(result.value);
+                    resolve();
                 } else {
                     reject(err);
                 }
@@ -158,7 +158,11 @@ exports.createUser = function(param){
     return paramCheck()
             .then(usernameNotExist)
             .then(createUser)
-            .then((value)=>{if(emailVerified) return value; else return generateEmailTokenInDB(value)});
+            .then(()=>{
+                return userDB.userBasicColl.findOne({username:username})
+            }).then((value)=>{
+                if(emailVerified) return value; else return generateEmailTokenInDB(value)
+            });
 };
 
 exports.emailVerify = function (param) {

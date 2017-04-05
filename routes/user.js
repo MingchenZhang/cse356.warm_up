@@ -39,7 +39,7 @@ exports.getRoute = function (s) {
             })
             .catch(function (err) {
                 console.error(err);
-                return res.status(200).send({status: 'OK', error: err});
+                return res.status(200).send({status: 'error', error: err});
             });
     });
 
