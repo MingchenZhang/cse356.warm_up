@@ -61,19 +61,19 @@ $(document).ready(function(){
     });
 
     $('#deletebyid-btn').click(function () {
-        var ttemp = document.getElementById("tpicker").value;
-        //window.alert(ttemp);
-        /*$.ajax({
+        $.ajax({
             url: '/item/'+$('#itemiddelete').val(),
             type: 'delete',
         }).done(function (result) {
             if(result.status === "OK"){
+                Materialize.toast("delete successfully", 2500, "green");
                 var currenttime2 = new Date().getTime()/1000;
                 getItemList(currenttime2,25,false,false);
             }
         }).fail(function (err) {
+            Materialize.toast("delete error", 2500, "red");
             console.error(err);
-        });*/
+        });
         /*var uname1 = document.getElementById("usernamepicker").value;
         var query1 = document.getElementById("querypicker").value;
         if(!uname1 && !query1){

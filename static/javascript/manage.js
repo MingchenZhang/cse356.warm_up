@@ -1,50 +1,53 @@
 $(document).ready(function(){
 	
-	$('#finduser-btn').click(function () {
-        /*$.ajax({
-            url: '/user/'+$('#username2').val(),
-            type: 'get',
-        }).done(function (result) {
+        $('#finduser-btn').click(function () {
+            $.ajax({
+                url: '/user/'+$('#username2').val(),
+                type: 'get',
+            }).done(function (result) {
             if(result.status === "OK"){
-            	updateCard("ss","ss","ss","ss");
+                Materialize.toast("find successfully", 2500, "green");
+                updateCard($('#username2').val(),result.user.email,result.user.following,result.user.followers);
             }
-        }).fail(function (err) {
-            console.error(err);
-        });*/
-		window.alert(222);
-    });
+            }).fail(function (err) {
+                Materialize.toast("find error", 2500, "red");
+                console.error(err);
+            });
+        });
 
 
 	$('#follow-btn').click(function () {
-        /*$.ajax({
+        $.ajax({
             url: '/follow',
             type: 'post',
             data: JSON.stringify({username: $('#username3').val(), follow: true}),
             contentType: "application/json; charset=utf-8",
             dataType: 'json'
         }).done(function (result) {
-            Materialize.toast(result.error, 2500, "red");
-            Materialize.toast(result.success, 2500, "green");
+            if(result.status === "OK"){
+                Materialize.toast("follow successfully", 2500, "green");
+            }
         }).fail(function (err) {
+            Materialize.toast("follow error", 2500, "red");
             console.error(err);
-        });*/
-        window.alert(333);
+        });
     });
 
 	$('#unfollow-btn').click(function () {
-        /*$.ajax({
+        $.ajax({
             url: '/follow',
             type: 'post',
             data: JSON.stringify({username: $('#username4').val(), follow: false}),
             contentType: "application/json; charset=utf-8",
             dataType: 'json'
         }).done(function (result) {
-            Materialize.toast(result.error, 2500, "red");
-            Materialize.toast(result.success, 2500, "green");
+            if(result.status === "OK"){
+                Materialize.toast("unfollow successfully", 2500, "green");
+            }
         }).fail(function (err) {
+            Materialize.toast("unfollow error", 2500, "red");
             console.error(err);
-        });*/
-        window.alert(444);
+        });
     });
 
 });
