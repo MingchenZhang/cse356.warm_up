@@ -54,6 +54,7 @@ exports.getRoute = function (s) {
     });
 
     router.post('/search', jsonParser, function (req, res, next) {
+        if(!req.userLoginInfo) return res.status(400).send({status: 'error', error: "please login first"});
         var searchCondition = {};
         if(req.body.timestamp) searchCondition.beforeDate = new Date(req.body.timestamp*1000+999);
         searchCondition.limitDoc = req.body.limit;
