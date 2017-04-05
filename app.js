@@ -55,11 +55,11 @@ if (Cluster.isMaster) {
     var app = Express();
 
     // debug logging
-    var jsonParser = BodyParser.json({limit: '10kb'});
-    app.use(jsonParser, (req, res, next)=>{
-        s.logConn.logRequest(req);
-        next();
-    });
+    // var jsonParser = BodyParser.json({limit: '10kb'});
+    // app.use(jsonParser, (req, res, next)=>{
+    //     s.logConn.logRequest(req);
+    //     next();
+    // });
 
     // secure with Helmet
     app.use(Helmet());
