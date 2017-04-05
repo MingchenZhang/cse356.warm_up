@@ -38,7 +38,8 @@ exports.getRoute = function (s) {
                 return res.status(200).send({status: 'OK', success: 'account created'});
             })
             .catch(function (err) {
-                return res.status(200).send(err);
+                console.error(err);
+                return res.status(200).send({status: 'OK', error: err});
             });
     });
 
