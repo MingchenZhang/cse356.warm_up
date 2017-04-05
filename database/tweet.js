@@ -113,7 +113,6 @@ exports.searchTweet = function(param){
     }
     if(searchText) query.$text = {$search: searchText};
     resolveFunction = function (resolve, reject) {
-        var query = {};
         if(param.beforeDate) query.createdAt = {$lte: beforeDate};
         tweetDB.tweetColl.find(query).sort({createdAt:-1}).limit(limitDoc).toArray(function (err, array) {
             if(err) {

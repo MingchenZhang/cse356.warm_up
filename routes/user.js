@@ -141,15 +141,16 @@ exports.getRoute = function (s) {
         var resultList = [];
         s.userConn.getUserBasicInfoByUsername({username: req.params.username}).then((user)=>{
             requestUser = user;
-            return s.userConn.listFollower(user._id);
+            return s.userConn.listFollower({followed: user._id});
         }).then((follower)=>{
+            console.log(JSON.stringify(follower));
             var resultPromise = [];
             for(let i=0; i<follower.length; i++){
                 let index = i;
                 let promise = s.userConn.getUserBasicInfo({userID: follower[i].follower}).then((follower)=>{
                     resultList[index] = follower.username;
                 });
-                resultList.push(promise);
+                resultPromise.push(promise);
             }
             return When.all(resultPromise);
         }).then(()=>{
@@ -164,15 +165,15 @@ exports.getRoute = function (s) {
         var resultList = [];
         s.userConn.getUserBasicInfoByUsername({username: req.params.username}).then((user)=>{
             requestUser = user;
-            return s.userConn.listFollowed(user._id);
+            return s.userConn.listFollowed({follower: user._id});
         }).then((followed)=>{
             var resultPromise = [];
             for(let i=0; i<followed.length; i++){
                 let index = i;
-                let promise = s.userConn.getUserBasicInfo({userID: followed[i].follower}).then((followed)=>{
+                let promise = s.userConn.getUserBasicInfo({userID: followed[i].followed}).then((followed)=>{
                     resultList[index] = followed.username;
                 });
-                resultList.push(promise);
+                resultPromise.push(promise);
             }
             return When.all(resultPromise);
         }).then(()=>{
@@ -188,10 +189,10 @@ exports.getRoute = function (s) {
         var followerList;
         s.userConn.getUserBasicInfoByUsername({username: req.params.username}).then((user)=>{
             userInfo = user;
-            return s.userConn.listFollowed(userInfo._id);
+            return s.userConn.listFollowed({follower: userInfo._id});
         }).then((followed)=>{
             followedList = followed;
-            return s.userConn.listFollower(userInfo._id);// TODO: use count instead
+            return s.userConn.listFollower({followed: userInfo._id});// TODO: use count instead
         }).then((follower)=>{
             followerList = follower;
             return res.status(200).send({

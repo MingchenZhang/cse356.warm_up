@@ -58,14 +58,15 @@ exports.getRoute = function (s) {
         if(req.body.timestamp) searchCondition.beforeDate = new Date(req.body.timestamp*1000+999);
         searchCondition.limitDoc = req.body.limit;
 
-        var prequeryPromise;
-        if(req.body.following){
-            prequeryPromise = s.userConn.listFollower({follower: req.userLoginInfo.userID}).then((followedList)=>{
-                searchCondition.userIDList = followedList.map((e)=>{return e.followed});
-            });
+        var prequeryPromise = When.resolve();
+        if(req.body.following === false && typeof req.body.username != 'string'){
         }else if(typeof req.body.username == 'string'){
             prequeryPromise = s.userConn.getUserBasicInfoByUsername({username: req.body.username}).then((userInfo)=>{
                 searchCondition.userIDList = [userInfo._id];
+            });
+        }else{
+            prequeryPromise = s.userConn.listFollowed({follower: req.userLoginInfo.userID}).then((followedList)=>{
+                searchCondition.userIDList = followedList.map((e)=>{return e.followed});
             });
         }
 

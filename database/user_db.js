@@ -8,7 +8,7 @@ var userDB = {}; // user related collection
 var login = {}; // login related collection
 
 exports.initDatabase = function (singleton, readyList) {
-    var s = singleton;
+    s = singleton;
 
     // user_info initialization
     var userDBPath = s.dbPath + 'eliza_user_info';
@@ -371,7 +371,7 @@ exports.follow = function (param) {
     return userDB.followColl.findOneAndUpdate({follower, followed}, {follower, followed}, {upsert: true});
 };
 
-exports.unfollow = function(){
+exports.unfollow = function(param){
     var follower = s.mongodb.ObjectId(param.follower);
     var followed = s.mongodb.ObjectId(param.followed);// both are ID
 
