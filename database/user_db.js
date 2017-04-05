@@ -293,9 +293,7 @@ exports.logoutSession = (param)=>{
 
     function removeSession(value) {
         return new When.promise(function (resolve, reject) {
-            login.sessionColl.findAndModify({sessionToken: sessionToken},
-                null,
-                {remove: true, w: 1},
+            login.sessionColl.deleteMany({sessionToken: sessionToken},
                 function (err, result) {
                     if(err) return reject({status: 'ERROR', error: 'database error'});
                     return resolve();
