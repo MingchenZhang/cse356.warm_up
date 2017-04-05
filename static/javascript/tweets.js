@@ -217,10 +217,17 @@ function getItemList(time,num,isLoadMore,isRearch){
     var uname1 = document.getElementById("usernamepicker").value;
     var query1 = document.getElementById("querypicker").value;
     var isFollowingOnly = document.getElementById("following-checkbox").checked;
+    var requestParam = {timestamp: time, limit: num, following: isFollowingOnly};
+    if(uname1){
+        requestParam.username = uname1;
+    }
+    if(query1){
+        requestParam.q = query1;
+    }
     $.ajax({
         url: '/search',
         type: 'post',
-        data: JSON.stringify({timestamp: time, limit: num, following: isFollowingOnly}),
+        data: JSON.stringify(requestParam),
         contentType: "application/json; charset=utf-8",
         dataType: 'json'
     }).done(function (result) {
