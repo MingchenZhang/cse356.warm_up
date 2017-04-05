@@ -122,7 +122,7 @@ exports.createUser = function(param){
             userDoc.hashedPassword = calculateHashedPassword(password, userDoc.passwordSalt);
             userDoc.emailVerified = emailVerified;
             userDoc.createdAt = new Date();
-            userDB.userBasicColl.findAndModify({username: username}, [['email', 1]], userDoc, {
+            userDB.userBasicColl.updateMany({username: username}, {$set: userDoc}, {
                 upsert: true,
                 w: 1,
                 new: true
@@ -183,10 +183,10 @@ exports.emailVerify = function (param) {
 
     function verifyEmail(userID) {
         return new When.promise(function (resolve, reject) {
-            userDB.userBasicColl.findAndModify({
+            userDB.userBasicColl.updateMany({
                 _id: userID
-            }, {_id: 1}, {$set: {emailVerified: true}}, function (err, result) {
-                if (result.lastErrorObject.n == 0) {
+            }, {$set: {emailVerified: true}}, function (err, result) {
+                if (result.matchedCount == 0) {
                     reject({status: 'ERROR', error: 'user not found'});
                 } else {
                     resolve(result.value);
@@ -207,10 +207,11 @@ exports.emailVerifyDirectly = function (param) {
     
     function verifyEmail(userID) {
         return new When.promise(function (resolve, reject) {
-            userDB.userBasicColl.findAndModify({
+            userDB.userBasicColl.updateMany({
                 email: email
-            }, {_id: 1}, {$set: {emailVerified: true}}, function (err, result) {
-                if (result.lastErrorObject.n == 0) {
+            }, {$set: {emailVerified: true}}, function (err, result) {
+                if(err) {console.error(err); reject({status: 'ERROR', error: 'database error'});}
+                if (result.matchedCount == 0) {
                     reject({status: 'ERROR', error: 'user not found'});
                 } else {
                     resolve(result.value);
@@ -288,7 +289,7 @@ exports.logoutSession = (param)=>{
 
     function removeSession(value) {
         return new When.promise(function (resolve, reject) {
-            login.sessionColl.findAndModify({sessionToken: sessionToken}, [['sessionToken', 1]],
+            login.sessionColl.findAndModify({sessionToken: sessionToken},
                 null,
                 {remove: true, w: 1},
                 function (err, result) {
@@ -368,7 +369,7 @@ exports.follow = function (param) {
     //     if(count == 0) return userDB.followColl.insertOne({follower, followed});
     //     else throw new {error:"followed already"};
     // });
-    return userDB.followColl.findOneAndUpdate({follower, followed}, {follower, followed}, {upsert: true});
+    return userDB.followColl.updateMany({follower, followed}, {$set: {follower, followed}}, {upsert: true});
 };
 
 exports.unfollow = function(param){
