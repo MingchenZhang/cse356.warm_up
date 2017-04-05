@@ -1,15 +1,7 @@
-var isOdd = true;
 $(document).ready(function(){
-    var FollowingNumber = 11;
-    for (var i = 0; i < FollowingNumber; i++) {
-        createCollectionItemFollowing("1111",false);
-    };
-    if(FollowingNumber%2!=0){
-        createCollectionItemFollowing("1",true);
-    }
+    getItemListFollowing();
     $('#limit-btn').click(function () {
-        //getItemListFollowing();
-        window.alert(3333);
+        getItemListFollowing();
     });
 });
 
@@ -55,6 +47,7 @@ function iterateItemListFollowing(itemlist){
 
 function getItemListFollowing(){
     var name1 = $('#name').html();
+    //window.alert(getLimit());
     var limit1 = getLimit();
     $.ajax({
         url: '/user/'+name1+'/following',
