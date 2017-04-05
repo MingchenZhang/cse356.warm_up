@@ -122,7 +122,7 @@ exports.createUser = function(param){
             userDoc.hashedPassword = calculateHashedPassword(password, userDoc.passwordSalt);
             userDoc.emailVerified = emailVerified;
             userDoc.createdAt = new Date();
-            userDB.userBasicColl.updateMany({username: username}, userDoc, {
+            userDB.userBasicColl.updateMany({username: username}, {$set: userDoc}, {
                 upsert: true,
                 w: 1,
                 new: true
@@ -369,7 +369,7 @@ exports.follow = function (param) {
     //     if(count == 0) return userDB.followColl.insertOne({follower, followed});
     //     else throw new {error:"followed already"};
     // });
-    return userDB.followColl.updateMany({follower, followed}, {follower, followed}, {upsert: true});
+    return userDB.followColl.updateMany({follower, followed}, {$set: {follower, followed}}, {upsert: true});
 };
 
 exports.unfollow = function(param){
