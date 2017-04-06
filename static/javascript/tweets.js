@@ -115,7 +115,9 @@ function setDefaultDate(){
     if(month<10){
         month = "0"+month;
     }
-    document.getElementById("dpicker").value = year+"-"+month+"-"+day;
+    var datetemp = year+"-"+month+"-"+day;
+    //document.getElementById("dpicker").value = year+"-"+month+"-"+day;
+    return datetemp;
 }
 
 function getDefaultTime(date1){
@@ -152,8 +154,9 @@ function convertAMPMTime(time1){
 }
 
 function getTimeStampFromDatePicker(){
-    if(!document.getElementById("dpicker").value){
-        setDefaultDate();
+    var list = document.getElementById("dpicker").value;
+    if(!list){
+        list = setDefaultDate();
     }
     var list2 = document.getElementById("tpicker").value;
     if(!list2){
@@ -162,7 +165,7 @@ function getTimeStampFromDatePicker(){
     else{
         list2 = convertAMPMTime(list2);
     }
-    var list = document.getElementById("dpicker").value.split("-");
+    list = list.split("-");
     list2 = list2.split(":");
     var date = new Date(list[0], list[1]-1, list[2]);
     date.setHours(list2[0],list2[1],59,999);
@@ -217,6 +220,7 @@ function getItemList(time,num,isLoadMore,isRearch){
     var uname1 = document.getElementById("usernamepicker").value;
     var query1 = document.getElementById("querypicker").value;
     var isFollowingOnly = document.getElementById("following-checkbox").checked;
+    //window.alert(isFollowingOnly);
     var requestParam = {timestamp: time, limit: num, following: isFollowingOnly};
     if(uname1){
         requestParam.username = uname1;
