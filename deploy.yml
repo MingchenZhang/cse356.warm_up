@@ -1,5 +1,6 @@
 ---
 - hosts: project2
+  serial: 1
   become: yes
   become_method: sudo
   vars:
@@ -84,13 +85,13 @@
   - name: start the nodejs service
     command: systemctl restart simple_nodejs_server.service
   
-  - name: pause 5 seconds
-    pause:
-      seconds: 5
-      
-  
-  - name: get nodejs status
-    command: systemctl status simple_nodejs_server.service -n30
-    register: node_status
-  - debug: msg="{{ node_status.stdout }}"
-  - debug: msg="{{ node_status.stderr }}"
+#  - name: pause 5 seconds
+#    pause:
+#      seconds: 5
+#
+#
+#  - name: get nodejs status
+#    command: systemctl status simple_nodejs_server.service -n30
+#    register: node_status
+#  - debug: msg="{{ node_status.stdout }}"
+#  - debug: msg="{{ node_status.stderr }}"
