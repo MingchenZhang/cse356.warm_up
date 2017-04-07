@@ -108,7 +108,10 @@ exports.searchTweet = function(param){
 
     var resolveFunction;
     var query = {};
-    if(!userIDList || userIDList.length == 0){}else{
+    /*if(!userIDList || userIDList.length == 0){}else{
+        query.postedBy = {$in: userIDList};
+    }*/
+    if(userIDList){
         query.postedBy = {$in: userIDList};
     }
     if(searchText) query.$text = {$search: searchText};
