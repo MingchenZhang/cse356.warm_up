@@ -252,6 +252,7 @@ function getItemList(time,num,isLoadMore,isRearch){
             iterateItemList(itemlist);
         }
     }).fail(function (err) {
+        Materialize.toast("search error", 2500, "red");
         console.error(err);
     });
 }
