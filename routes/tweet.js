@@ -44,13 +44,31 @@ exports.getRoute = function (s) {
 
     router.delete('/item/:id', function (req, res, next) {
         var tweetDoc = null;
-        s.tweetConn.deleteTweet({id: req.params.id})
-            .then(()=>{
-                return res.status(200).send({status: 'OK'});
+        var uname = null;
+        s.tweetConn.getTweet({id: req.params.id})
+            .then((result)=>{
+                tweetDoc = result;
+                return {userID: result.postedBy};
             })
-            .catch((err)=>{
+            .then(s.userConn.getUserBasicInfo)
+            .then((result)=>{
+                uname = result.username;
+                if(uname !== req.userLoginInfo.info.username){
+                    return res.status(400).send({status: 'error', error: "cannot delete this tweet"});
+                }
+
+                s.tweetConn.deleteTweet({id: req.params.id})
+                    .then(()=>{
+                        return res.status(200).send({status: 'OK'});
+                    })
+                    .catch((err)=>{
+                        return res.status(400).send({status: 'error', error: err.result});
+                    });
+            })
+            .catch(function (err) {
                 return res.status(400).send({status: 'error', error: err.result});
             });
+
     });
 
     router.post('/search', jsonParser, function (req, res, next) {
