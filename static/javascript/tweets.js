@@ -220,7 +220,6 @@ function getItemList(time,num,isLoadMore,isRearch){
     var uname1 = document.getElementById("usernamepicker").value;
     var query1 = document.getElementById("querypicker").value;
     var isFollowingOnly = document.getElementById("following-checkbox").checked;
-    //window.alert(isFollowingOnly);
     var requestParam = {timestamp: time, limit: num, following: isFollowingOnly};
     if(uname1){
         requestParam.username = uname1;

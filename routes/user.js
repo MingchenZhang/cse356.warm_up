@@ -146,7 +146,11 @@ exports.getRoute = function (s) {
         }).then((follower)=>{
             console.log(JSON.stringify(follower));
             var resultPromise = [];
-            for(let i=0; i<follower.length; i++){
+            var index = follower.length;
+            if(follower.length>req.query.limit){
+                index = req.query.limit;
+            }
+            for(let i=0; i<index; i++){
                 let index = i;
                 let promise = s.userConn.getUserBasicInfo({userID: follower[i].follower}).then((follower)=>{
                     resultList[index] = follower.username;
@@ -169,7 +173,11 @@ exports.getRoute = function (s) {
             return s.userConn.listFollowed({follower: user._id, limit: req.query.limit});
         }).then((followed)=>{
             var resultPromise = [];
-            for(let i=0; i<followed.length; i++){
+            var index = followed.length;
+            if(followed.length>req.query.limit){
+                index = req.query.limit;
+            }
+            for(let i=0; i<index; i++){
                 let index = i;
                 let promise = s.userConn.getUserBasicInfo({userID: followed[i].followed}).then((followed)=>{
                     resultList[index] = followed.username;

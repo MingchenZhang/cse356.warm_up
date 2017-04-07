@@ -53,10 +53,11 @@ function getItemListFollowing(){
     var name1 = $('#name').html();
     //window.alert(getLimit());
     var limit1 = getLimit();
+    limit1 = parseInt(limit1);
     $.ajax({
         url: '/user/'+name1+'/following',
         type: 'get',
-        data: JSON.stringify({limit: limit1}),
+        data: {limit: limit1},
         contentType: "application/json; charset=utf-8",
         dataType: 'json'
     }).done(function (result) {
