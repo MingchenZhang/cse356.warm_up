@@ -142,7 +142,7 @@ exports.getRoute = function (s) {
         var resultList = [];
         s.userConn.getUserBasicInfoByUsername({username: req.params.username}).then((user)=>{
             requestUser = user;
-            return s.userConn.listFollower({followed: user._id});
+            return s.userConn.listFollower({followed: user._id, limit: req.query.limit});
         }).then((follower)=>{
             console.log(JSON.stringify(follower));
             var resultPromise = [];
@@ -166,7 +166,7 @@ exports.getRoute = function (s) {
         var resultList = [];
         s.userConn.getUserBasicInfoByUsername({username: req.params.username}).then((user)=>{
             requestUser = user;
-            return s.userConn.listFollowed({follower: user._id});
+            return s.userConn.listFollowed({follower: user._id, limit: req.query.limit});
         }).then((followed)=>{
             var resultPromise = [];
             for(let i=0; i<followed.length; i++){
