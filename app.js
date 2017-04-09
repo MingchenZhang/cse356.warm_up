@@ -28,7 +28,8 @@ if (Cluster.isMaster) {
         dbAuth: {username: process.env.DB_USERNAME || null, password: process.env.DB_PASSWORD || null},
         mongodb: Mongodb,
         userConn: null,
-        tools: require('./tools').getToolSet(s)
+        tools: require('./tools').getToolSet(s),
+        sendEmail: false
     };
 
     var startupPromises = []; // wait for all initialization to finish

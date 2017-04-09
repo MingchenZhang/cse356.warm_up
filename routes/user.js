@@ -13,6 +13,7 @@ exports.getRoute = function (s) {
             return res.status(200).send({status: 'ERROR', error: 'format error'});
 
         function sendValidationEmail(email) {
+            if(!s.sendEmail) return When.resolve();
             return new When.promise(function (resolve, reject) {
                 s.emailTransporter.sendMail({
                     from: "mingczhang@cs.stonybrook.edu",
