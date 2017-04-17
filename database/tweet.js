@@ -24,6 +24,8 @@ exports.initDatabase = function (singleton, readyList) {
 
                 tweetDB.tweetColl = db.collection('tweets');
 
+                tweetDB.mediaFileBucket = new s.mongodb.GridFSBucket(db, {bucketName: 'mediaFileBucket'});
+
                 tweetDBReady.resolve();
             }
         }
@@ -41,13 +43,19 @@ exports.initDatabase = function (singleton, readyList) {
 exports.addTweet = function(param){
     var content = param.content;
     var postedBy = s.mongodb.ObjectId(param.postedBy);
+    var parent = s.mongodb.ObjectId(param.postedBy);
+    var media = param.media;
 
     function addTweet(value) {
         return new When.promise(function (resolve, reject) {
             var tweetDoc = {
                 createdAt: new Date(),
-                content: content,
-                postedBy: postedBy,
+                content,
+                postedBy,
+                parent,
+                media,
+                interestValue: Math.floor((new Date()).getTime()/1000),
+                like:0
             };
             tweetDB.tweetColl.insertOne(tweetDoc, function (err, result) {
                 if (!err) {
@@ -86,13 +94,20 @@ exports.deleteTweet = function(param){
 
     function deleteTweetDoc(value) {
         return new When.promise(function (resolve, reject) {
-            tweetDB.tweetColl.deleteOne({_id: id}, function (err, result) {
-                if(err) return reject({error: 'database error'});
-                if(result.result.n == 1) {
-                    return resolve(result);
-                }
-                else return reject({error: 'tweet not found'});
+            tweetDB.tweetColl.find({_id: id}).forEach(function (doc) {
+                if(doc.media) s.tweetConn.getMediaFileBucket().delete(s.mongodb.ObjectID(doc.media));
+                tweetDB.tweetColl.deleteOne({_id: id}, function (err, result) {
+                    if(err) return reject({error: 'database error'});
+                    if(result.result.n == 1) {
+                        return resolve(result);
+                    }
+                    else return reject({error: 'tweet not found'});
+                });
+            }, function (err) {
+                console.error(err);
+                reject(err);
             });
+
         });
     }
 
@@ -105,6 +120,9 @@ exports.searchTweet = function(param){
     if(typeof param.limitDoc == 'number' && param.limitDoc<=100 && param.limitDoc>0 ) limitDoc = param.limitDoc;
     var userIDList = param.userIDList; // filter by userID array
     var searchText = param.searchText;
+    var parent = param.parent;
+    var replies = param.replies;
+    var sortByInterest = param.sortByInterest;
 
     var resolveFunction;
     var query = {};
@@ -115,9 +133,14 @@ exports.searchTweet = function(param){
         query.postedBy = {$in: userIDList};
     }
     if(searchText) query.$text = {$search: searchText};
+    if(parent) query.parent = s.mongodb.ObjectID(parent);
+    if(replies != undefined && !replies) query.parent = {$exists: false};
     resolveFunction = function (resolve, reject) {
         if(param.beforeDate) query.createdAt = {$lte: beforeDate};
-        tweetDB.tweetColl.find(query).sort({createdAt:-1}).limit(limitDoc).toArray(function (err, array) {
+        var cursor = tweetDB.tweetColl.find(query);
+        if(sortByInterest) cursor = cursor.sort({interestValue:-1});
+        else cursor = cursor.sort({createdAt:-1});
+        cursor.limit(limitDoc).toArray(function (err, array) {
             if(err) {
                 reject({error: err});
             }else{
@@ -127,4 +150,39 @@ exports.searchTweet = function(param){
     };
 
     return new Promise(resolveFunction);
+};
+
+exports.getMediaFileBucket = function(){
+    return tweetDB.mediaFileBucket;
+};
+
+exports.modifyInterestValue = function(param){
+    var _id = s.mongodb.ObjectID(param.tweetID);
+    var value = param.value;
+
+    function getTweetDoc() {
+        return new When.promise(function (resolve, reject) {
+            tweetDB.tweetColl.updateMany({_id}, {$inc:{interestValue:value}}, function (err, result) {
+                if(err) return reject(err);
+                return resolve();
+            });
+        });
+    }
+
+    return getTweetDoc();
+};
+exports.modifyLikeValue = function(param){
+    var _id = s.mongodb.ObjectID(param.tweetID);
+    var value = param.value;
+
+    function getTweetDoc() {
+        return new When.promise(function (resolve, reject) {
+            tweetDB.tweetColl.updateMany({_id}, {$inc:{like:value}}, function (err, result) {
+                if(err) return reject(err);
+                return resolve();
+            });
+        });
+    }
+
+    return getTweetDoc();
 };
