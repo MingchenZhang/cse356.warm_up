@@ -196,7 +196,7 @@ exports.getRoute = function (s) {
             var outStream = s.tweetConn.getMediaFileBucket().openDownloadStream(doc._id);
             res.setHeader('Content-disposition', 'attachment; filename=' + doc.filename);
             res.setHeader('Content-length', doc.length.toString());
-            res.setHeader('Content-Type', doc.contentType || 'image/jpeg');
+            res.setHeader('Content-Type', 'image/jpeg');
             outStream.pipe(res);
             cursor.close();
         });
