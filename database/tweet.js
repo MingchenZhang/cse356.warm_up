@@ -43,7 +43,7 @@ exports.initDatabase = function (singleton, readyList) {
 exports.addTweet = function(param){
     var content = param.content;
     var postedBy = s.mongodb.ObjectId(param.postedBy);
-    var parent = s.mongodb.ObjectId(param.postedBy);
+    var parent = s.mongodb.ObjectId(param.parent);
     var media = param.media;
 
     function addTweet(value) {
