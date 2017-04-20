@@ -104,6 +104,7 @@ exports.deleteTweet = function(param){
                     else return reject({error: 'tweet not found'});
                 });
             }, function (err) {
+                console.error('fail to delete');
                 console.error(err);
                 reject(err);
             });

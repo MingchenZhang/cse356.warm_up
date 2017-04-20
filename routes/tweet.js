@@ -24,7 +24,7 @@ exports.getRoute = function (s) {
             parent: req.body.parent,
             media: req.body.media
         }).then(function (result) {
-            s.tweetConn.modifyInterestValue({tweetID: req.body.parent});
+            s.tweetConn.modifyInterestValue({tweetID: req.body.parent, value:1});
             return res.status(200).send({status: 'OK', success: 'post created', id: result.insertedID});
         }).catch(function (err) {
             return res.status(500).send({status: 'error', error: err});
@@ -75,7 +75,7 @@ exports.getRoute = function (s) {
                         return res.status(200).send({status: 'OK'});
                     })
                     .catch((err)=>{
-                        return res.status(400).send({status: 'error', error: err.result});
+                        return res.status(400).send({status: 'error', error: err?err.result:'unknown error'});
                     });
             })
             .catch(function (err) {
