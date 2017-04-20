@@ -152,7 +152,7 @@ exports.getRoute = function (s) {
         boy.on('file', function(fieldname, file, filename, encoding, mimetype) {
             if(filename.length == 0) return file.pipe(BlackHole());
             var fileID = s.mongodb.ObjectID();
-            var uploadStream = s.tweetConn.getMediaFileBucket().openUploadStreamWithId(fileID, filename, {metadata:{}});
+            var uploadStream = s.tweetConn.getMediaFileBucket().openUploadStreamWithId(fileID, filename, {metadata:{}, contentType:mimetype});
             file.on('end', function () {
                 if(ended) console.error('WTF: ended!!');
                 fields.attachmentList.push({name:filename, id:fileID});
@@ -196,6 +196,7 @@ exports.getRoute = function (s) {
             var outStream = s.tweetConn.getMediaFileBucket().openDownloadStream(doc._id);
             res.setHeader('Content-disposition', 'attachment; filename=' + doc.filename);
             res.setHeader('Content-length', doc.length.toString());
+            res.setHeader('Content-Type', doc.contentType || 'image/jpeg');
             outStream.pipe(res);
             cursor.close();
         });
