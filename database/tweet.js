@@ -135,7 +135,7 @@ exports.searchTweet = function(param){
     if(userIDList){
         query.postedBy = {$in: userIDList};
     }
-    if(searchText) query.$text = {$search: searchText};
+    if(searchText) query.$text = {$search: searchText, $diacriticSensitive: true};
     if(parent) query.parent = s.mongodb.ObjectID(parent);
     if(replies != undefined && !replies) query.parent = {$exists: false};
     resolveFunction = function (resolve, reject) {
