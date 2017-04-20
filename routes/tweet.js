@@ -91,6 +91,7 @@ exports.getRoute = function (s) {
         searchCondition.limitDoc = req.body.limit;
         searchCondition.parent = req.body.parent;
         searchCondition.replies = req.body.replies;
+        searchCondition.sortByInterest = req.body.rank!='time';
 
         var prequeryPromise = When.resolve();
         if(req.body.following === false && typeof req.body.username != 'string'){
