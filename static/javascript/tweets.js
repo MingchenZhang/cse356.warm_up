@@ -97,39 +97,35 @@ $(document).ready(function(){
     });
 
     $('#likebyid-btn').click(function () {
+        var islike = document.getElementById("like").checked;
         $.ajax({
             url: '/item/'+$('#itemidlike').val()+'/like',
             type: 'post',
-            data: JSON.stringify({like: true}),
+            data: JSON.stringify({like: islike}),
             contentType: "application/json; charset=utf-8",
             dataType: 'json'
         }).done(function (result) {
             if(result.status === "OK"){
-                Materialize.toast("like successfully", 2500, "green");
+                if(islike){
+                    Materialize.toast("like successfully", 2500, "green");
+                }
+                else{
+                    Materialize.toast("unlike successfully", 2500, "green");
+                }
+                
             }
         }).fail(function (err) {
-            Materialize.toast("like error", 2500, "red");
+            if(islike){
+                Materialize.toast("like error", 2500, "red");
+            }
+            else{
+                Materialize.toast("unlike error", 2500, "red");
+            }
             console.error(err);
         });
     });
 
-    $('#unlikebyid-btn').click(function () {
-        //window.alert($('#itemidunlike').val());
-        $.ajax({
-            url: '/item/'+$('#itemidlike').val()+'/like',
-            type: 'post',
-            data: JSON.stringify({like: false}),
-            contentType: "application/json; charset=utf-8",
-            dataType: 'json'
-        }).done(function (result) {
-            if(result.status === "OK"){
-                Materialize.toast("unlike successfully", 2500, "green");
-            }
-        }).fail(function (err) {
-            Materialize.toast("unlike error", 2500, "red");
-            console.error(err);
-        });
-    });
+
 
     $('#upload-media-btn').click(function () {
         //window.alert($('#media-filepath').val());
@@ -303,7 +299,7 @@ function addMedia(id){
     var media_list = document.getElementById("media-list");
     var newMediaID = document.createElement('li');
     var mnumber = mediaIDList.length;
-    newMediaID.innerHTML = "Media#"+mnumber+":"+id;
+    newMediaID.innerHTML = "Media#"+mnumber+": "+id;
     media_list.appendChild(newMediaID);
 }
 
@@ -324,7 +320,6 @@ function findOneTweet(itemID,listitem,image_list){
             if(result.status === "OK"){
                 if(result.item.media){
                     var mediaList = result.item.media;
-                    //window.alert(mediaList.length)
                     for (var i = 0; i < mediaList.length; i++) {
                         getMedia(mediaList[i], image_list);
                     }

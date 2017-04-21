@@ -64,7 +64,7 @@ nav#top-nav{
 button.btn{
 	width: 130px;
 	height: 35px;
-	font-size: 10px;
+	font-size: 11px;
 	background: #1E88E5;
 }
 button.btn:hover{
@@ -183,13 +183,13 @@ ul.collapsible .btn{
 }
 
 #following-label,#replies-label{
-	margin: 15px 0px 20px 0px;
+	margin: 10px 0px 10px 0px;
 	color: rgba(0,0,0,0.87);
 }
 
 .content-left textarea{
 	background: white;
-	margin: 15px 0px 7px 0px;
+	margin: 15px 0px 0px 0px;
 	border: 2px solid #e0e0e0 !important;
 	border-radius: 3px;
 	width: 310px;
@@ -348,8 +348,8 @@ ul.tabs2,.tab2{
 }
 
 
-.rank{
-	margin: 20px 0px 20px 20px !important;
+.r-box{
+	margin: 15px 0px 15px 20px !important;
 }
 input[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:after {
     background-color: #039be5;
@@ -367,4 +367,23 @@ input[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:b
 .file-btn{
 	width: 50px !important;
 	padding: 0px;
+}
+
+.file-field.input-field{
+    display: inline-block;
+    width: 80%;
+}
+
+#media-model-btn{
+	font-size: 11px;
+	height: 35px;
+	width: 130px;
+}
+
+input:not([type]), input[type=text], input[type=password], input[type=email], input[type=url], input[type=time], input[type=date], input[type=datetime], input[type=datetime-local], input[type=tel], input[type=number], input[type=search], textarea.materialize-textarea {
+	margin: 0 0 7px 0;
+}
+
+.margin-bottom{
+	margin-bottom: 17px !important;
 }

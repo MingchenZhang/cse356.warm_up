@@ -49,7 +49,7 @@
 	<div class="collapsible-header z-depth-3 active"><i class="material-icons">chevron_right</i>Post New Tweets</div>
 	<div class="collapsible-body">
 		<textarea id="textarea1" placeholder="Post a New Tweet..."></textarea>
-		<table><tr><td>Parent: </td><td><input type="text" id="parentID"></td></tr></table>
+		<table><tr><td>Parent: </td><td><input type="text" id="parentID" class="margin-bottom"></td></tr></table>
 
 
 
@@ -59,7 +59,7 @@
 	<ul id="media-list">
 		
 	</ul>
-	<a class="btn blue darken-1" type="button" href="#media-modal">Upload Media</a>
+	
 
 	<div id="media-modal" class="modal">
 		<div class="modal-content container">
@@ -73,7 +73,9 @@
 			<div class="file-path-wrapper">
 			<input class="file-path validate" type="text" id="media-filepath">
 			</div>
-			<button class="btn blue darken-1" type="button" id="upload-media-btn">Upload</button>
+			</div>
+			<div>
+				<button class="btn blue darken-1" type="button" id="upload-media-btn">Upload</button>
 			</div>
 		</div>
 		<div class="modal-footer">
@@ -84,7 +86,7 @@
 
 
 
-
+		<a class="btn blue darken-1" id="media-model-btn" type="button" href="#media-modal">Add Media</a>
 		<div><button class="btn blue darken-1" type="button" id="tweet-btn">Submit</button></div>
 	</div>
 	</li>
@@ -100,51 +102,45 @@
 	    <tr><td>Username: </td><td><input type="text" id="usernamepicker"></td></tr>
 	    <tr><td>Parent: </td><td><input type="text" id="parentpicker"></td></tr>
 		<tr><td>Rank By:</td>
-			<td><input name="rank" type="radio" id="rank-time" checked="checked"/><label class="rank" for="rank-time">Time</label><input name="rank" type="radio" id="rank-interest" /><label class="rank" for="rank-interest">Interest</label></td>
+			<td><input name="rank" type="radio" id="rank-time" checked="checked"/><label class="r-box" for="rank-time">Time</label><input name="rank" type="radio" id="rank-interest" /><label class="r-box" for="rank-interest">Interest</label></td>
 		</tr>
 	    </table>
 	    <div class="checkbox-container">
 	    	<input type="checkbox" class="filled-in" id="replies-checkbox" checked="checked"/><label for="replies-checkbox" id="replies-label">Include Reply Tweets</label>
 			<br>
-	    	<input type="checkbox" class="filled-in" id="following-checkbox"/><label for="following-checkbox" id="following-label">Following Only</label>
-	    </div><!--  checked="checked" -->
+	    	<input type="checkbox" class="filled-in" id="following-checkbox"/><label for="following-checkbox" id="following-label" class="margin-bottom">Following Only</label>
+	    </div>
 		<button class="btn blue darken-1" type="button" id="search-btn">Submit</button>
 	</div>
 	</li>
 	<li>
-	<div class="collapsible-header z-depth-3"><i class="material-icons">chevron_right</i>Find Tweet By ID</div>
+	<div class="collapsible-header z-depth-3"><i class="material-icons">chevron_right</i>Find a Tweet</div>
 	<div class="collapsible-body">
 		<table>
-	    <tr><td>Tweet ID: </td><td><input type="text" id="itemid"></td></tr>
+	    <tr><td>Tweet ID: </td><td><input type="text" id="itemid" class="margin-bottom"></td></tr>
 	    </table>
 		<button class="btn blue darken-1" type="button" id="search2-btn">Submit</button>
 	</div>
 	</li>
 	<li>
-	<div class="collapsible-header z-depth-3"><i class="material-icons">chevron_right</i>Delete Tweet By ID</div>
+	<div class="collapsible-header z-depth-3"><i class="material-icons">chevron_right</i>Delete Tweet</div>
 	<div class="collapsible-body">
 		<table>
-	    <tr><td>Tweet ID: </td><td><input type="text" id="itemiddelete"></td></tr>
+	    <tr><td>Tweet ID: </td><td><input type="text" id="itemiddelete" class="margin-bottom"></td></tr>
 	    </table>
 		<button class="btn blue darken-1" type="button" id="deletebyid-btn">Submit</button>
 	</div>
 	</li>
 	<li>
-	<div class="collapsible-header z-depth-3"><i class="material-icons">chevron_right</i>Like Tweet By ID</div>
+	<div class="collapsible-header z-depth-3"><i class="material-icons">chevron_right</i>Like | Unlike</div>
 	<div class="collapsible-body">
 		<table>
 	    <tr><td>Tweet ID: </td><td><input type="text" id="itemidlike"></td></tr>
+	    <tr><td></td></tr>
 	    </table>
+	    <div><input name="like" type="radio" id="like" checked="checked"/><label class="r-box" for="like">Like</label><input name="like" type="radio" id="unlike" /><label class="r-box" for="unlike">Unlike</label></div>
+	    
 		<button class="btn blue darken-1" type="button" id="likebyid-btn">Submit</button>
-	</div>
-	</li>
-	<li>
-	<div class="collapsible-header z-depth-3"><i class="material-icons">chevron_right</i>Unlike Tweet By ID</div>
-	<div class="collapsible-body">
-		<table>
-	    <tr><td>Tweet ID: </td><td><input type="text" id="itemidunlike"></td></tr>
-	    </table>
-		<button class="btn blue darken-1" type="button" id="unlikebyid-btn">Submit</button>
 	</div>
 	</li>
 	</ul>
@@ -154,7 +150,6 @@
 
 <div class="col s12 m7 l8">
 	<div class="content-right"><center>
-	<!-- <img class="responsive-img" src="static/1.jpg"> -->
 	<ul id="tweet-collection" class="collection">
 	</ul>
 	</center></div>
