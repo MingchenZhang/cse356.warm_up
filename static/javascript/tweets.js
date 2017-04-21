@@ -4,6 +4,7 @@
  */
 var loadMoreTimestamp;
 var numFromNumberPicker;
+var mediaIDList = [];
 $(document).ready(function(){
     setDefaultDate();
     var currenttime = new Date().getTime()/1000;
@@ -12,10 +13,21 @@ $(document).ready(function(){
     getItemList(currenttime,25,false,false);
 
     $('#tweet-btn').click(function () {
+        var newItem = {content: $('#textarea1').val()};
+        var parent1 = document.getElementById("parentID").value;
+        if(parent1){
+            //window.alert(parent1);
+            newItem.parent = parent1;
+        }
+        if(mediaIDList.length>0){
+            newItem.media = mediaIDList;
+            mediaIDList = [];
+            removeMediaList();
+        }
         $.ajax({
             url: '/additem',
             type: 'post',
-            data: JSON.stringify({content: $('#textarea1').val()}),
+            data: JSON.stringify(newItem),
             contentType: "application/json; charset=utf-8",
             dataType: 'json'
         }).done(function (result) {
@@ -84,6 +96,65 @@ $(document).ready(function(){
         window.alert(query1);*/
     });
 
+    $('#likebyid-btn').click(function () {
+        $.ajax({
+            url: '/item/'+$('#itemidlike').val()+'/like',
+            type: 'post',
+            data: JSON.stringify({like: true}),
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json'
+        }).done(function (result) {
+            if(result.status === "OK"){
+                Materialize.toast("like successfully", 2500, "green");
+            }
+        }).fail(function (err) {
+            Materialize.toast("like error", 2500, "red");
+            console.error(err);
+        });
+    });
+
+    $('#unlikebyid-btn').click(function () {
+        //window.alert($('#itemidunlike').val());
+        $.ajax({
+            url: '/item/'+$('#itemidlike').val()+'/like',
+            type: 'post',
+            data: JSON.stringify({like: false}),
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json'
+        }).done(function (result) {
+            if(result.status === "OK"){
+                Materialize.toast("unlike successfully", 2500, "green");
+            }
+        }).fail(function (err) {
+            Materialize.toast("unlike error", 2500, "red");
+            console.error(err);
+        });
+    });
+
+    $('#upload-media-btn').click(function () {
+        //window.alert($('#media-filepath').val());
+        var form_data = new FormData();
+        form_data.append('content', $('#media-file')[0].files[0]);
+        $.ajax({
+            url: '/addmedia',
+            data: form_data,
+            type: 'post',
+            contentType: false,
+            processData: false,
+        }).done(function (result) {
+            if(result.status === "OK"){
+                Materialize.toast("upload successfully", 2500, "green");
+                $('#media-modal').modal('close');
+                mediaIDList.push(result.id);
+                addMedia(result.id);
+            }
+            //Materialize.toast(result.error, 2500, "red");
+            //Materialize.toast(result.success, 2500, "green");
+        }).fail(function (err) {
+            console.error(err);
+        });
+    });
+
     $('.datepicker').pickadate({
         selectMonths: false,
         selectYears: 10,
@@ -102,6 +173,13 @@ $(document).ready(function(){
     });
 /*var y_value = $("#textarea-container").offset().top;
 window.alert(y_value);*/
+
+
+    $('.modal').modal({
+        dismissible: true,
+    });
+
+
 });
 
 function setDefaultDate(){
@@ -208,6 +286,9 @@ function createCollectionItem(name,text,time,id){
     content_text.innerHTML = text;
     id_text.innerHTML = "ID: "+id;
     time_text.innerHTML = new Date(time*1000).toLocaleString();
+    findOneTweet(id,list_item);
+    
+
     list_item.appendChild(icon);
     list_item.appendChild(title);
     list_item.appendChild(content_text);
@@ -216,16 +297,81 @@ function createCollectionItem(name,text,time,id){
     tweet_list.appendChild(list_item);
 }
 
+function addMedia(id){
+    var media_list = document.getElementById("media-list");
+    var newMediaID = document.createElement('li');
+    var mnumber = mediaIDList.length;
+    newMediaID.innerHTML = "Media#"+mnumber+":"+id;
+    media_list.appendChild(newMediaID);
+}
+
+
+function removeMediaList(){
+    var media_list = document.getElementById("media-list");
+    while(media_list.hasChildNodes()){
+        media_list.removeChild(media_list.lastChild);
+    }
+}
+
+
+function findOneTweet(itemID,listitem){
+    $.ajax({
+            url: '/item/'+itemID,
+            type: 'get',
+        }).done(function (result) {
+            if(result.status === "OK"){
+                if(result.item.media){
+                    var mediaList = result.item.media;
+                    //window.alert(mediaList.length)
+                    for (var i = 0; i < mediaList.length; i++) {
+                        getMedia(mediaList[i],listitem);
+                    }
+                }
+            }
+        }).fail(function (err) {
+            console.error(err);
+    });
+}
+
+
+function getMedia(id,listitem){
+    $.ajax({
+        url: '/media/'+id,
+        type: 'get',
+        success: function (data) {
+            var img = document.createElement('img');
+            img.setAttribute("src", 'data:image/jpeg;base64,'+data);
+            listitem.appendChild(img);
+        }
+    }).done(function (result) {
+        if(result.status === "OK"){
+            
+        }
+    }).fail(function (err) {
+        console.error(err);
+    });
+}
+
 function getItemList(time,num,isLoadMore,isRearch){
     var uname1 = document.getElementById("usernamepicker").value;
     var query1 = document.getElementById("querypicker").value;
+    var parent1 = document.getElementById("parentpicker").value;
     var isFollowingOnly = document.getElementById("following-checkbox").checked;
-    var requestParam = {timestamp: time, limit: num, following: isFollowingOnly};
+    var isIncludeReplies = document.getElementById("replies-checkbox").checked;
+    var isRankByTime = document.getElementById("rank-time").checked;
+    //window.alert(isIncludeReplies);
+    var requestParam = {timestamp: time, limit: num, following: isFollowingOnly, replies: isIncludeReplies};
     if(uname1){
         requestParam.username = uname1;
     }
     if(query1){
         requestParam.q = query1;
+    }
+    if(parent1){
+        requestParam.parent = parent1;
+    }
+    if(isRankByTime){
+        requestParam.rank = "time";
     }
     $.ajax({
         url: '/search',
