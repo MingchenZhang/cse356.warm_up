@@ -205,6 +205,7 @@ exports.getRoute = function (s) {
 
     router.post('/item/:tweetID/like', jsonParser, function (req, res, next) {
         s.tweetConn.modifyLikeValue({tweetID: req.params.tweetID, value: req.body.like?1:-1});
+        s.tweetConn.modifyInterestValue({tweetID: req.params.tweetID, value: req.body.like?1:-1});
         return res.send({status: 'OK'});
     });
 
