@@ -98,12 +98,11 @@ exports.deleteTweet = function(param){
                 if(doc.media) doc.media.forEach((m)=>{
                     s.tweetConn.getMediaFileBucket().delete(s.mongodb.ObjectID(m));
                 });
-                tweetDB.tweetColl.deleteOne({_id: id}, function (err, result) {
+                tweetDB.tweetColl.deleteMany({_id: id}, function (err, result) {
                     if(err) return reject({error: 'database error'});
-                    if(result.result.n == 1) {
+                    if(result.result.n >= 1) {
                         return resolve(result);
                     }
-                    else return reject({error: 'tweet not found'});
                 });
             }, function (err) {
                 console.error('fail to delete');
