@@ -114,6 +114,10 @@ input[type=date]:focus,input[type=time]:focus,input[type=number]:focus,input[typ
      border: 2px solid #039be5;
      background-color: #039be5;
 }
+#replies-checkbox[type="checkbox"].filled-in:checked + label:after{
+     border: 2px solid #039be5;
+     background-color: #039be5;
+}
 /*.nav-wrapper form{
 	display: inline-block;
 }*/
@@ -178,7 +182,7 @@ ul.collapsible .btn{
 	margin: 0px 0px 15px 0px;
 }
 
-#following-label{
+#following-label,#replies-label{
 	margin: 15px 0px 20px 0px;
 	color: rgba(0,0,0,0.87);
 }
@@ -341,4 +345,26 @@ ul.tabs2,.tab2{
 .limit-container{
 	width: 100%;
 }
+}
+
+
+.rank{
+	margin: 20px 0px 20px 20px !important;
+}
+input[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:after {
+    background-color: #039be5;
+}
+input[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after {
+    border: 2px solid #039be5;
+}
+
+.checkbox-container{
+	padding-left: 5px;
+	text-align: left;
+}
+
+
+.file-btn{
+	width: 50px !important;
+	padding: 0px;
 }
