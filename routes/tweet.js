@@ -148,7 +148,10 @@ exports.getRoute = function (s) {
             limits:{fields:50, fieldSize:40*1024, files:1, fileSize: 10*1024*1024, headerPairs:1}
         });
         boy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-            if(filename.length == 0) return file.pipe(BlackHole());
+            if(filename.length == 0) {
+                writeError(400, 'file is zero byte');
+                return file.pipe(BlackHole());
+            }
             var fileID = s.mongodb.ObjectID();
             var uploadStream = s.tweetConn.getMediaFileBucket().openUploadStreamWithId(fileID, filename, {metadata:{}, contentType:mimetype});
             file.on('end', function () {
