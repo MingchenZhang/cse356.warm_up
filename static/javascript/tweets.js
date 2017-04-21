@@ -335,21 +335,9 @@ function findOneTweet(itemID,listitem){
 
 
 function getMedia(id,listitem){
-    $.ajax({
-        url: '/media/'+id,
-        type: 'get',
-        success: function (data) {
-            var img = document.createElement('img');
-            img.setAttribute("src", 'data:image/jpeg;base64,'+data);
-            listitem.appendChild(img);
-        }
-    }).done(function (result) {
-        if(result.status === "OK"){
-            
-        }
-    }).fail(function (err) {
-        console.error(err);
-    });
+    var img = document.createElement('img');
+    img.setAttribute("src", '/media/'+id);
+    listitem.appendChild(img);
 }
 
 function getItemList(time,num,isLoadMore,isRearch){
