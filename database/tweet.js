@@ -94,7 +94,8 @@ exports.deleteTweet = function(param){
 
     function deleteTweetDoc(value) {
         return new When.promise(function (resolve, reject) {
-            tweetDB.tweetColl.find({_id: id}).forEach(function (doc) {
+            tweetDB.tweetColl.findOne({_id: id}, function (err, doc) {
+                if(err) return reject(err);
                 if(doc.media) doc.media.forEach((m)=>{
                     s.tweetConn.getMediaFileBucket().delete(s.mongodb.ObjectID(m));
                 });
@@ -104,12 +105,7 @@ exports.deleteTweet = function(param){
                         return resolve(result);
                     }
                 });
-            }, function (err) {
-                console.error('fail to delete');
-                console.error(err);
-                reject(err);
             });
-
         });
     }
 
