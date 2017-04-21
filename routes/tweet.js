@@ -70,13 +70,11 @@ exports.getRoute = function (s) {
                     return res.status(400).send({status: 'error', error: "cannot delete this tweet"});
                 }
 
-                s.tweetConn.deleteTweet({id: req.params.id})
-                    .then(()=>{
-                        return res.status(200).send({status: 'OK'});
-                    })
-                    .catch((err)=>{
-                        return res.status(400).send({status: 'error', error: err?err.result:'unknown error'});
-                    });
+                return s.tweetConn.deleteTweet({id: req.params.id}).then(()=> {
+                    return res.status(200).send({status: 'OK'});
+                }).catch((err)=> {
+                    return res.status(400).send({status: 'error', error: err ? err.result : 'unknown error'});
+                });
             })
             .catch(function (err) {
                 return res.status(400).send({status: 'error', error: err.result});
