@@ -286,13 +286,15 @@ function createCollectionItem(name,text,time,id){
     content_text.innerHTML = text;
     id_text.innerHTML = "ID: "+id;
     time_text.innerHTML = new Date(time*1000).toLocaleString();
-    findOneTweet(id,list_item);
-    
 
+    var image_list = document.createElement('ul');
+    findOneTweet(id,list_item,image_list);
+    
     list_item.appendChild(icon);
     list_item.appendChild(title);
     list_item.appendChild(content_text);
     list_item.appendChild(time_text);
+    list_item.appendChild(image_list);
     list_item.appendChild(id_text);
     tweet_list.appendChild(list_item);
 }
@@ -314,7 +316,7 @@ function removeMediaList(){
 }
 
 
-function findOneTweet(itemID,listitem){
+function findOneTweet(itemID,listitem,image_list){
     $.ajax({
             url: '/item/'+itemID,
             type: 'get',
@@ -324,7 +326,7 @@ function findOneTweet(itemID,listitem){
                     var mediaList = result.item.media;
                     //window.alert(mediaList.length)
                     for (var i = 0; i < mediaList.length; i++) {
-                        getMedia(mediaList[i],listitem);
+                        getMedia(mediaList[i], image_list);
                     }
                 }
             }
@@ -334,10 +336,13 @@ function findOneTweet(itemID,listitem){
 }
 
 
-function getMedia(id,listitem){
+function getMedia(id,image_list){
+    var li = document.createElement('li');
     var img = document.createElement('img');
     img.setAttribute("src", '/media/'+id);
-    listitem.appendChild(img);
+    img.className = "responsive-img";
+    li.appendChild(img);
+    image_list.appendChild(li);
 }
 
 function getItemList(time,num,isLoadMore,isRearch){
