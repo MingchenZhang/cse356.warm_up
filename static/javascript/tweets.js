@@ -129,8 +129,11 @@ $(document).ready(function(){
 
     $('#upload-media-btn').click(function () {
         //window.alert($('#media-filepath').val());
+
         var form_data = new FormData();
-        form_data.append('content', $('#media-file')[0].files[0]);
+        var media_file = document.getElementById("media-file").files[0];
+        //window.alert(media_file.type);
+        form_data.append('content', media_file);
         $.ajax({
             url: '/addmedia',
             data: form_data,
@@ -337,8 +340,20 @@ function getMedia(id,image_list){
     img.setAttribute("src", '/media/'+id);
     img.className = "responsive-img";
     li.appendChild(img);
+    img.onerror = function(){
+        var video = document.createElement('video');
+        var source = document.createElement('source');
+        video.className = "responsive-video";
+        video.setAttribute("controls","controls");
+        source.setAttribute("type", "video/mp4");
+        source.setAttribute("src", '/media/'+id);
+        video.appendChild(source);
+        li.removeChild(img);
+        li.appendChild(video);
+    };
     image_list.appendChild(li);
 }
+
 
 function getItemList(time,num,isLoadMore,isRearch){
     var uname1 = document.getElementById("usernamepicker").value;
