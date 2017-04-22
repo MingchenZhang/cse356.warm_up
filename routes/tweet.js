@@ -73,7 +73,7 @@ exports.getRoute = function (s) {
                 return s.tweetConn.deleteTweet({id: req.params.id}).then(()=> {
                     return res.status(200).send({status: 'OK'});
                 }).catch((err)=> {
-                    return res.status(400).send({status: 'error', error: err.result ? err.result : 'unknown error'});
+                    return res.status(400).send({status: 'error', error: err ? err : 'unknown error'});
                 });
             })
             .catch(function (err) {

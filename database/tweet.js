@@ -125,13 +125,16 @@ exports.deleteTweet = function(param){
         return new When.promise(function (resolve, reject) {
             tweetDB.tweetColl.findOne({_id: id}, function (err, doc) {
                 if(err) return reject(err);
+                if(!doc) return reject('unable to delete');
                 if(doc.media) doc.media.forEach((m)=>{
                     s.tweetConn.getMediaFileBucket().delete(s.mongodb.ObjectID(m));
                 });
                 tweetDB.tweetColl.deleteMany({_id: id}, function (err, result) {
-                    if(err) return reject({error: 'database error'});
+                    if(err) return reject('database error');
                     if(result.result.n >= 1) {
                         return resolve(result);
+                    }else{
+                        return reject('unable to delete');
                     }
                 });
             });
