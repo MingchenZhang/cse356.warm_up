@@ -170,7 +170,7 @@ ul.collapsible, .collapsible-body{
 	text-align: left;
 	margin: 0px 0px 3px 0px;
 }
-@media only screen and (max-width: 600px){
+@media only screen and (max-width: 832px){
 .collapsible-header{
 	width: 100%;
 }
@@ -201,24 +201,24 @@ ul.collapsible .btn{
 	border: 2px solid #e0e0e0 !important;
 	box-shadow: none !important;
 }
-@media only screen and (max-width: 992px){
+@media only screen and (max-width: 1252px){
 .content-left textarea{
 	width: 240px;
 	height: 60px;
 }
-#tweets .container{
+#tweets .container,#manage .container{
 	width: 95%;
 }
 }
-@media only screen and (max-width: 600px){
+@media only screen and (max-width: 832px){
 .content-left textarea{
-	width: 280px;
+	width: 97%;
 	height: 65px;
 }
 .content-right,.content-left{
 	float: none;
 }
-#tweets .container{
+#tweets .container,#manage .container{
 	width: 100%;
 }
 }
@@ -387,3 +387,4 @@ input:not([type]), input[type=text], input[type=password], input[type=email], in
 .margin-bottom{
 	margin-bottom: 17px !important;
 }
+
