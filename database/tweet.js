@@ -5,6 +5,7 @@ var CryptoJS = require('crypto-js');
 
 var s;
 var tweetDB = {}; // user related collection
+var fileDB = {}; // user related collection
 
 exports.initDatabase = function (singleton, readyList) {
     s = singleton;
@@ -24,9 +25,37 @@ exports.initDatabase = function (singleton, readyList) {
 
                 tweetDB.tweetColl = db.collection('tweets');
 
-                tweetDB.mediaFileBucket = new s.mongodb.GridFSBucket(db, {bucketName: 'mediaFileBucket'});
+                // tweetDB.mediaFileBucket = new s.mongodb.GridFSBucket(db, {bucketName: 'mediaFileBucket'});
 
                 tweetDBReady.resolve();
+            }
+        }
+
+        if (s.dbAuth.username && s.dbAuth.password) {
+            db.admin().authenticate(s.dbAuth.username, s.dbAuth.password, function (err, result) {
+                ready(db, err, result);
+            });
+        } else {
+            ready(db, err, null);
+        }
+    });
+
+    // file initialization
+    var fileDBPath = s.dbPath + 'file';
+    var fileDBReady = When.defer();
+    readyList.push(fileDBReady.promise);
+    console.log('try to connect to '+fileDBPath);
+    s.mongodb.MongoClient.connect(fileDBPath, function (err, db) {
+        function ready(db, err, result) {
+            if (err) {
+                console.error('MongodbClient connection ' + fileDBPath + ' failed');
+                process.exit(1);
+            } else {
+                console.log('MongodbClient connection to ' + fileDBPath + ' has been established');
+
+                fileDB.mediaFileBucket = new s.mongodb.GridFSBucket(db, {bucketName: 'mediaFileBucket'});
+
+                fileDBReady.resolve();
             }
         }
 
@@ -151,7 +180,7 @@ exports.searchTweet = function(param){
 };
 
 exports.getMediaFileBucket = function(){
-    return tweetDB.mediaFileBucket;
+    return fileDB.mediaFileBucket;
 };
 
 exports.modifyInterestValue = function(param){
