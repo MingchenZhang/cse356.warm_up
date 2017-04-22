@@ -77,7 +77,7 @@ exports.getRoute = function (s) {
                 });
             })
             .catch(function (err) {
-                return res.status(400).send({status: 'error', error: err.result});
+                return res.status(400).send({status: 'error', error: err.error});
             });
 
     });
