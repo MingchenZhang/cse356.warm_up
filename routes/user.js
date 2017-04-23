@@ -100,6 +100,7 @@ exports.getRoute = function (s) {
     });
 
     router.all('/logout', function (req, res, next) {
+        if(!req.userLoginInfo) return res.send({status: 'OK', success: 'logged out'});
         s.userConn.logoutSession({sessionToken: req.userLoginInfo.sessionToken})
             .then(function (result) {
                 res.clearCookie('login_session');
@@ -145,7 +146,7 @@ exports.getRoute = function (s) {
             requestUser = user;
             return s.userConn.listFollower({followed: user._id, limit: req.query.limit});
         }).then((follower)=>{
-            console.log(JSON.stringify(follower));
+            //console.log(JSON.stringify(follower));
             var resultPromise = [];
             var index = follower.length;
             if(follower.length>req.query.limit){
