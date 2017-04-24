@@ -29,7 +29,8 @@ if (Cluster.isMaster) {
         mongodb: Mongodb,
         userConn: null,
         tools: require('./tools').getToolSet(s),
-        sendEmail: false
+        sendEmail: false,
+        perfTest: !!process.env.PERF_TEST,
     };
 
     var startupPromises = []; // wait for all initialization to finish
@@ -56,11 +57,12 @@ if (Cluster.isMaster) {
     var app = Express();
 
     // debug logging
-    // var jsonParser = BodyParser.json({limit: '10kb'});
-    // app.use(jsonParser, (req, res, next)=>{
-    //     s.logConn.logRequest(req);
-    //     next();
-    // });
+    var jsonParser = BodyParser.json({limit: '10kb'});
+    app.use(jsonParser, (req, res, next)=>{
+        //s.logConn.logRequest(req);
+        if(s.perfTest) req.startTime = process.hrtime();
+        next();
+    });
 
     // secure with Helmet
     app.use(Helmet());

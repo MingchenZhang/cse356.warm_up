@@ -18,13 +18,27 @@ exports.getRoute = function (s) {
             }
         }
 
+        if(s.perfTest){
+            var addTweetTime = process.hrtime();
+            var addInterestTime;
+        }
         s.tweetConn.addTweet({
             content: req.body.content,
             postedBy: req.userLoginInfo.userID,
             parent: req.body.parent,
             media: req.body.media
         }).then(function (result) {
-            s.tweetConn.modifyInterestValue({tweetID: req.body.parent, value:1});
+            if(s.perfTest){
+                addTweetTime = process.hrtime(addTweetTime);
+                addInterestTime = process.hrtime();
+            }
+            if (req.body.parent)
+                s.tweetConn.modifyInterestValue({tweetID: req.body.parent, value: 1}).then(()=> {
+                    if (s.perfTest) {
+                        addInterestTime = process.hrtime(addInterestTime);
+                        s.logConn.perfLog({type: 'add tweet', addTweetTime, addInterestTime, totalTime: process.hrtime(req.startTime)});
+                    }
+                });
             return res.status(200).send({status: 'OK', success: 'post created', id: result.insertedID});
         }).catch(function (err) {
             return res.status(500).send({status: 'error', error: err});
@@ -32,14 +46,26 @@ exports.getRoute = function (s) {
     });
 
     router.get('/item/:id', function (req, res, next) {
+        if(s.perfTest){
+            var getTweetTime = process.hrtime();
+            var getUserTime;
+        }
         var tweetDoc = null;
         s.tweetConn.getTweet({id: req.params.id})
             .then((result)=>{
+                if(s.perfTest) {
+                    getTweetTime = process.hrtime(getTweetTime);
+                    getUserTime = process.hrtime();
+                }
                 tweetDoc = result;
                 return {userID: result.postedBy};
             })
             .then(s.userConn.getUserBasicInfo)
             .then(function (posterInfo) {
+                if(s.perfTest){
+                    getUserTime = process.hrtime(getUserTime);
+                    s.logConn.perfLog({type: 'get tweet by id', getTweetTime, getUserTime, totalTime: process.hrtime(req.startTime)});
+                }
                 var item = {
                     id: tweetDoc._id,
                     username: posterInfo.username,
@@ -107,10 +133,18 @@ exports.getRoute = function (s) {
             searchCondition.searchText = req.body.q;
         }
 
+        if(s.perfTest){
+            var searchTime = process.hrtime();
+            var userRetrievalTime;
+        }
         var resultList = [];
         prequeryPromise.then(()=>{
             return s.tweetConn.searchTweet(searchCondition);
         }).then((tweetArray)=>{
+            if(s.perfTest){
+                searchTime = process.hrtime(searchTime);
+                userRetrievalTime = process.hrtime();
+            }
             var userInfoRetrivalPromises = [];
             for(let i=0; i<tweetArray.length; i++) {
                 let index = i;
@@ -127,6 +161,10 @@ exports.getRoute = function (s) {
             }
             return When.all(userInfoRetrivalPromises);
         }).then((result)=>{
+            if(s.perfTest){
+                userRetrievalTime = process.hrtime(userRetrievalTime);
+                s.logConn.perfLog({type: 'search', searchCondition, searchTime, userRetrievalTime, totalTime: process.hrtime(req.startTime)});
+            }
             return res.status(200).send({status: 'OK', items: resultList});
         }).catch((err)=>{
             return res.status(400).send({status: 'error', error: err});

@@ -33,9 +33,15 @@ exports.getRoute = function (s) {
             });
         }
 
+        if(s.perfTest){
+            var createUserTime = process.hrtime();
+        }
         s.userConn.createUser({email: req.body.email, username: req.body.username, password: req.body.password})
             .then(sendValidationEmail)
             .then(function (result) {
+                if(s.perfTest){
+                    s.logConn.perfTest({type: 'add user', createUserTime, totalTime: process.hrtime(req.startTime)});
+                }
                 return res.status(200).send({status: 'OK', success: 'account created'});
             })
             .catch(function (err) {
@@ -84,6 +90,9 @@ exports.getRoute = function (s) {
         if (!s.tools.isAllString(req.query))
             return res.status(200).send({status: 'ERROR', error: 'format error'});
 
+        if(s.perfTest){
+            var userLoginTime = process.hrtime();
+        }
         s.userConn.userLogin({username: req.body.username, password: req.body.password})
             .then(function (session) {
                 res.cookie('login_session', session.sessionToken,
@@ -92,6 +101,10 @@ exports.getRoute = function (s) {
                         secure: !!s.inProduction,
                         expires: (new Date(Date.now() + 180 * 24 * 3600 * 1000))
                     });
+                if(s.perfTest){
+                    userLoginTime = process.hrtime(userLoginTime);
+                    s.logConn.perfTest({type: 'login', userLoginTime, totalTime: process.hrtime(req.startTime)});
+                }
                 return res.status(200).send({status: 'OK', success: 'logged in'});
             })
             .catch(function (err) {

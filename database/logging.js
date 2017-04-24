@@ -1,7 +1,4 @@
 var When = require('when');
-var RandomString = require('randomstring');
-var SHA256 = require("crypto-js/sha256");
-var CryptoJS = require('crypto-js');
 
 var s;
 var loggingDB = {}; // user related collection
@@ -23,7 +20,8 @@ exports.initDatabase = function (singleton, readyList) {
                 console.log('MongodbClient connection to ' + loggingDBPath + ' has been established');
 
                 loggingDB.requestsColl = db.collection('requests');
-                loggingDB.requestsColl.ensureIndex({time: 1}, {background: true, w: 1});
+                loggingDB.requestsColl.createIndex({time: 1});
+                loggingDB.perfLofColl = db.collection('perfLog');
 
                 loggingDBReady.resolve();
             }
@@ -49,5 +47,9 @@ exports.logRequest = function(request){
         body: request.body
     };
 
-    loggingDB.requestsColl.insertOne(record);
+    return loggingDB.requestsColl.insertOne(record);
+};
+
+exports.perfLog = function (info) {
+    return loggingDB.perfLofColl.insertOne(Object.assign(info, {time: new Date()}));
 };
