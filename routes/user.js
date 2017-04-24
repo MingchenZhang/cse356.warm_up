@@ -40,7 +40,7 @@ exports.getRoute = function (s) {
             .then(sendValidationEmail)
             .then(function (result) {
                 if(s.perfTest){
-                    s.logConn.perfTest({type: 'add user', createUserTime, totalTime: process.hrtime(req.startTime)});
+                    s.logConn.perfLog({type: 'add user', createUserTime, totalTime: process.hrtime(req.startTime)});
                 }
                 return res.status(200).send({status: 'OK', success: 'account created'});
             })
@@ -102,7 +102,7 @@ exports.getRoute = function (s) {
                 });
                 if(s.perfTest){
                     userLoginTime = process.hrtime(userLoginTime);
-                    s.logConn.perfTest({type: 'login', userLoginTime, totalTime: process.hrtime(req.startTime)});
+                    s.logConn.perfLog({type: 'login', userLoginTime, totalTime: process.hrtime(req.startTime)});
                 }
                 return res.status(200).send({status: 'OK', success: 'logged in'});
             })
