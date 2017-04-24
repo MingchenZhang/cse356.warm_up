@@ -95,12 +95,11 @@ exports.getRoute = function (s) {
         }
         s.userConn.userLogin({username: req.body.username, password: req.body.password})
             .then(function (session) {
-                res.cookie('login_session', session.sessionToken,
-                    {
-                        httpOnly: true,
-                        secure: !!s.inProduction,
-                        expires: (new Date(Date.now() + 180 * 24 * 3600 * 1000))
-                    });
+                res.cookie('login_session', session.sessionToken, {
+                    httpOnly: true,
+                    secure: !!s.inProduction,
+                    expires: (new Date(Date.now() + 180 * 24 * 3600 * 1000))
+                });
                 if(s.perfTest){
                     userLoginTime = process.hrtime(userLoginTime);
                     s.logConn.perfTest({type: 'login', userLoginTime, totalTime: process.hrtime(req.startTime)});
@@ -108,7 +107,7 @@ exports.getRoute = function (s) {
                 return res.status(200).send({status: 'OK', success: 'logged in'});
             })
             .catch(function (err) {
-                return res.status(200).send(err);
+                return res.status(200).send({status: 'error', error: err.message});
             });
     });
 
