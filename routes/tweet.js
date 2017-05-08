@@ -78,7 +78,7 @@ exports.getRoute = function (s) {
             };
             return res.status(200).send({status: 'OK', item: item});
         }).catch(function (err) {
-            next(err);
+            return res.status(400).send({status: 'error', error: err.message});
         });
     });
 
