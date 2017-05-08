@@ -141,9 +141,9 @@ exports.createUser = function(param){
             }, function (err, result) {
                 if (!err) {
                     if(result.upsertedId && result.upsertedId._id){
-                        if(memcached) memcached.replace(MEMCACHED_USERID+result.upsertedId._id, JSON.stringify(userDoc), 3600, ()=>{});
+                        if(memcached) memcached.replace(MEMCACHED_USERID+result.upsertedId._id, JSON.stringify(userDoc), 3600, (err)=>{if(err) console.error(err)});
                     }
-                    if(memcached) memcached.replace(MEMCACHED_USERNAME+username, JSON.stringify(userDoc), 3600, ()=>{});
+                    if(memcached) memcached.replace(MEMCACHED_USERNAME+username, JSON.stringify(userDoc), 3600, (err)=>{if(err) console.error(err)});
                     resolve();
                 } else {
                     reject(err);
