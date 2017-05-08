@@ -17,7 +17,7 @@
         WorkingDirectory=/var/node/{{project_name}}/
         Environment=HTTP_PORT=80
         Environment=DB_PATH=mongodb://localhost:{{DB_PORT}}/
-        Environment=PERF_TEST=true
+        Environment=PERF_TEST=false
         Environment=USER_DB_PATH=mongodb://192.168.1.64:27017/
         Environment=TWEET_DB_PATH=mongodb://192.168.1.67:27017/
         Environment=LOG_DB_PATH=mongodb://192.168.1.70:27017/
