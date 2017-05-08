@@ -101,7 +101,7 @@ exports.getRoute = function (s) {
             });
             if (s.perfTest) {
                 userLoginTime = process.hrtime(userLoginTime);
-                s.logConn.perfLog({type: 'loginDB', userLoginTime, totalTime: process.hrtime(req.startTime)});
+                s.logConn.perfLog({type: 'login', userLoginTime, totalTime: process.hrtime(req.startTime)});
             }
             return res.status(200).send({status: 'OK', success: 'logged in'});
         }).catch(function (err) {
@@ -133,7 +133,7 @@ exports.getRoute = function (s) {
 
     router.post('/follow', jsonParser, function (req, res, next) {
         if (!req.userLoginInfo)
-            return res.status(401).send({status: 'error', error: 'loginDB first'});
+            return res.status(401).send({status: 'error', error: 'login first'});
         s.userConn.getUserBasicInfoByUsername({username: req.body.username}).then((userInfo)=> {
             if (req.body.follow) {
                 return s.userConn.follow({follower: req.userLoginInfo.userID, followed: userInfo._id});

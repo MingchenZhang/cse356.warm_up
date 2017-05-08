@@ -88,7 +88,7 @@ if (Cluster.isMaster) {
         next();
     });
 
-    // Add user loginDB session lookup
+    // Add user login session lookup
     app.use((req, res, next) => {
         req.userLoginInfo = null;
         res.locals.userLoginInfo = null;

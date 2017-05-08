@@ -10,7 +10,7 @@ const MEMCACHED_SESSION = 'user_session=';
 
 var s;
 var userDB = {}; // user related collection
-var loginDB = {}; // loginDB related collection
+var loginDB = {}; // login related collection
 var memcached = null;
 
 exports.initDatabase = function (singleton, readyList) {
