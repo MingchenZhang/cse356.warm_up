@@ -111,7 +111,7 @@ exports.addTweet = function(param){
     }
 
     return addTweet().then((result)=>{
-        if(memcached) memcached.replace(MEMCACHED_TWEETID+result.insertedId, JSON.stringify(tweetDoc), 3600, ()=>{});
+        if(memcached) memcached.set(MEMCACHED_TWEETID+result.insertedId, JSON.stringify(tweetDoc), 3600, ()=>{});
         return {insertedID: result.insertedId};
     });
 };
@@ -135,7 +135,7 @@ exports.getTweet = function(param){
         return new When.promise(function (resolve, reject) {
             tweetDB.tweetColl.findOne({_id: id}, function (err, result) {
                 if(!err && result !== null) {
-                    if(memcached) memcached.replace(MEMCACHED_TWEETID+result._id, JSON.stringify(result), 3600, ()=>{});
+                    if(memcached) memcached.set(MEMCACHED_TWEETID+result._id, JSON.stringify(result), 3600, ()=>{});
                     return resolve(result);
                 }
                 else return reject(new Error('tweet not found'));
