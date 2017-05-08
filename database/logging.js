@@ -7,7 +7,7 @@ exports.initDatabase = function (singleton, readyList) {
     s = singleton;
 
     // user_info initialization
-    var loggingDBPath = s.dbPath + 'eliza_logging';
+    var loggingDBPath = (s.logDBPath || s.dbPath) + 'eliza_logging';
     var loggingDBReady = When.defer();
     readyList.push(loggingDBReady.promise);
     console.log('try to connect to '+loggingDBPath);

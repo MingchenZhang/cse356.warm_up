@@ -41,7 +41,7 @@ exports.getRoute = function (s) {
                 });
             return res.status(200).send({status: 'OK', success: 'post created', id: result.insertedID});
         }).catch(function (err) {
-            return res.status(500).send({status: 'error', error: err});
+            return res.status(500).send({status: 'error', error: err.message});
         });
     });
 
@@ -51,65 +51,61 @@ exports.getRoute = function (s) {
             var getUserTime;
         }
         var tweetDoc = null;
-        s.tweetConn.getTweet({id: req.params.id})
-            .then((result)=>{
-                if(s.perfTest) {
-                    getTweetTime = process.hrtime(getTweetTime);
-                    getUserTime = process.hrtime();
-                }
-                tweetDoc = result;
-                return {userID: result.postedBy};
-            })
-            .then(s.userConn.getUserBasicInfo)
-            .then(function (posterInfo) {
-                if(s.perfTest){
-                    getUserTime = process.hrtime(getUserTime);
-                    s.logConn.perfLog({type: 'get tweet by id', getTweetTime, getUserTime, totalTime: process.hrtime(req.startTime)});
-                }
-                var item = {
-                    id: tweetDoc._id,
-                    username: posterInfo.username,
-                    content: tweetDoc.content,
-                    timestamp: Math.floor(tweetDoc.createdAt.getTime()/1000),
-                    parent: tweetDoc.parent,
-                    media: tweetDoc.media,
-                };
-                return res.status(200).send({status: 'OK', item: item});
-            })
-            .catch(function (err) {
-                return res.status(500).send({status: 'error', error: err});
-            });
+        s.tweetConn.getTweet({id: req.params.id}).then((result)=> {
+            if (s.perfTest) {
+                getTweetTime = process.hrtime(getTweetTime);
+                getUserTime = process.hrtime();
+            }
+            tweetDoc = result;
+            return {userID: result.postedBy};
+        }).then(s.userConn.getUserBasicInfo).then(function (posterInfo) {
+            if (s.perfTest) {
+                getUserTime = process.hrtime(getUserTime);
+                s.logConn.perfLog({
+                    type: 'get tweet by id',
+                    getTweetTime,
+                    getUserTime,
+                    totalTime: process.hrtime(req.startTime)
+                });
+            }
+            var item = {
+                id: tweetDoc._id,
+                username: posterInfo.username,
+                content: tweetDoc.content,
+                timestamp: Math.floor(tweetDoc.createdAt.getTime() / 1000),
+                parent: tweetDoc.parent,
+                media: tweetDoc.media,
+            };
+            return res.status(200).send({status: 'OK', item: item});
+        }).catch(function (err) {
+            return res.status(500).send({status: 'error', error: err.message});
+        });
     });
 
     router.delete('/item/:id', function (req, res, next) {
         var tweetDoc = null;
         var uname = null;
-        s.tweetConn.getTweet({id: req.params.id})
-            .then((result)=>{
-                tweetDoc = result;
-                return {userID: result.postedBy};
-            })
-            .then(s.userConn.getUserBasicInfo)
-            .then((result)=>{
-                uname = result.username;
-                if(uname !== req.userLoginInfo.info.username){
-                    return res.status(400).send({status: 'error', error: "cannot delete this tweet"});
-                }
+        s.tweetConn.getTweet({id: req.params.id}).then((result)=> {
+            tweetDoc = result;
+            return {userID: result.postedBy};
+        }).then(s.userConn.getUserBasicInfo).then((result)=> {
+            uname = result.username;
+            if (uname !== req.userLoginInfo.info.username) {
+                return res.status(400).send({status: 'error', error: "cannot delete this tweet"});
+            }
 
-                return s.tweetConn.deleteTweet({id: req.params.id}).then(()=> {
-                    return res.status(200).send({status: 'OK'});
-                }).catch((err)=> {
-                    return res.status(400).send({status: 'error', error: err ? err : 'unknown error'});
-                });
-            })
-            .catch(function (err) {
-                return res.status(400).send({status: 'error', error: err.error});
+            return s.tweetConn.deleteTweet({id: req.params.id}).then(()=> {
+                return res.status(200).send({status: 'OK'});
+            }).catch((err)=> {
+                return res.status(400).send({status: 'error', error: err ? err : 'unknown error'});
             });
-
+        }).catch(function (err) {
+            return res.status(400).send({status: 'error', error: err.message});
+        });
     });
 
     router.post('/search', jsonParser, function (req, res, next) {
-        if(!req.userLoginInfo) return res.status(400).send({status: 'error', error: "please login first"});
+        if(!req.userLoginInfo) return res.status(400).send({status: 'error', error: "please loginDB first"});
         var searchCondition = {};
         if(req.body.timestamp) searchCondition.beforeDate = new Date(req.body.timestamp*1000+999);
         searchCondition.limitDoc = req.body.limit;
@@ -167,7 +163,7 @@ exports.getRoute = function (s) {
             }
             return res.status(200).send({status: 'OK', items: resultList});
         }).catch((err)=>{
-            return res.status(400).send({status: 'error', error: err});
+            return res.status(400).send({status: 'error', error: err.message});
         });
     });
 

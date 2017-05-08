@@ -1,17 +1,18 @@
 var When = require('when');
-var RandomString = require('randomstring');
-var SHA256 = require("crypto-js/sha256");
-var CryptoJS = require('crypto-js');
 
 var s;
 var tweetDB = {}; // user related collection
 var fileDB = {}; // user related collection
+var memcached;
+
+const MEMCACHED_TWEETID = 'tweet_id=';
+
 
 exports.initDatabase = function (singleton, readyList) {
     s = singleton;
 
     // user_info initialization
-    var tweetDBPath = s.dbPath + 'tweet';
+    var tweetDBPath = (s.tweetDBPath || s.dbPath) + 'tweet';
     var tweetDBReady = When.defer();
     readyList.push(tweetDBReady.promise);
     console.log('try to connect to '+tweetDBPath);
@@ -24,6 +25,11 @@ exports.initDatabase = function (singleton, readyList) {
                 console.log('MongodbClient connection to ' + tweetDBPath + ' has been established');
 
                 tweetDB.tweetColl = db.collection('tweets');
+                tweetDB.tweetColl.createIndex({postedBy: 1});
+                tweetDB.tweetColl.createIndex({content: "text"});
+                tweetDB.tweetColl.createIndex({createdAt: -1});
+                tweetDB.tweetColl.createIndex({parent:1});
+                tweetDB.tweetColl.createIndex({interestValue:1});
 
                 // tweetDB.mediaFileBucket = new s.mongodb.GridFSBucket(db, {bucketName: 'mediaFileBucket'});
 
@@ -38,10 +44,11 @@ exports.initDatabase = function (singleton, readyList) {
         } else {
             ready(db, err, null);
         }
+
     });
 
     // file initialization
-    var fileDBPath = s.dbPath + 'file';
+    var fileDBPath = (s.mediaDBPath || s.dbPath) + 'file';
     var fileDBReady = When.defer();
     readyList.push(fileDBReady.promise);
     console.log('try to connect to '+fileDBPath);
@@ -67,6 +74,8 @@ exports.initDatabase = function (singleton, readyList) {
             ready(db, err, null);
         }
     });
+
+    if(s.tweetConnMemcache) memcached = new Memcached(s.tweetConnMemcache);
 };
 
 exports.addTweet = function(param){
@@ -75,28 +84,31 @@ exports.addTweet = function(param){
     var parent = s.mongodb.ObjectId(param.parent);
     var media = param.media;
 
+    var tweetDoc = {
+        createdAt: new Date(),
+        content,
+        postedBy,
+        parent,
+        media,
+        interestValue: Math.floor((new Date()).getTime()/1000),
+        like:0
+    };
+
     function addTweet(value) {
         return new When.promise(function (resolve, reject) {
-            var tweetDoc = {
-                createdAt: new Date(),
-                content,
-                postedBy,
-                parent,
-                media,
-                interestValue: Math.floor((new Date()).getTime()/1000),
-                like:0
-            };
+
             tweetDB.tweetColl.insertOne(tweetDoc, function (err, result) {
                 if (!err) {
                     resolve(result);
                 } else {
-                    reject({error: 'database error'});
+                    reject(new Error('database error'));
                 }
             });
         });
     }
 
     return addTweet().then((result)=>{
+        if(memcached) memcached.replace(MEMCACHED_TWEETID+result.insertedId, JSON.stringify(tweetDoc));
         return {insertedID: result.insertedId};
     });
 };
@@ -104,18 +116,30 @@ exports.addTweet = function(param){
 exports.getTweet = function(param){
     var id = s.mongodb.ObjectId(param.id);
 
+    function lookUpCache(){
+        if(!memcached) return When.resolve(null);
+        return new When.promise(function (resolve, reject) {
+            if(!memcached) return resolve(null);
+            memcached.get(MEMCACHED_TWEETID+id, (err, data)=>{
+                if(err) return reject(new Error('memcached error'));
+                if(data) return resolve(JSON.parse(data));
+                else return resolve(null);
+            });
+        });
+    }
+
     function getTweetDoc(value) {
         return new When.promise(function (resolve, reject) {
             tweetDB.tweetColl.findOne({_id: id}, function (err, result) {
                 if(!err && result !== null) {
                     return resolve(result);
                 }
-                else return reject({error: 'tweet not found'});
+                else return reject(new Error('tweet not found'));
             });
         });
     }
 
-    return getTweetDoc();
+    return lookUpCache().then((cache)=>{return cache || getTweetDoc()});
 };
 
 exports.deleteTweet = function(param){
@@ -125,23 +149,26 @@ exports.deleteTweet = function(param){
         return new When.promise(function (resolve, reject) {
             tweetDB.tweetColl.findOne({_id: id}, function (err, doc) {
                 if(err) return reject(err);
-                if(!doc) return reject('unable to delete');
+                if(!doc) return reject(new Error('unable to delete'));
                 if(doc.media) doc.media.forEach((m)=>{
                     s.tweetConn.getMediaFileBucket().delete(s.mongodb.ObjectID(m));
                 });
                 tweetDB.tweetColl.deleteMany({_id: id}, function (err, result) {
-                    if(err) return reject('database error');
+                    if(err) return reject(new Error('database error'));
                     if(result.result.n >= 1) {
                         return resolve(result);
                     }else{
-                        return reject('unable to delete');
+                        return reject(new Error('unable to delete'));
                     }
                 });
             });
         });
     }
 
-    return deleteTweetDoc();
+    return deleteTweetDoc().then((result)=>{
+        if(memcached) memcached.del(MEMCACHED_TWEETID+id);
+        return result;
+    });
 };
 
 exports.searchTweet = function(param){
@@ -172,7 +199,7 @@ exports.searchTweet = function(param){
         else cursor = cursor.sort({createdAt:-1});
         cursor.limit(limitDoc).toArray(function (err, array) {
             if(err) {
-                reject({error: err});
+                reject(err);
             }else{
                 resolve(array);
             }
@@ -194,6 +221,7 @@ exports.modifyInterestValue = function(param){
         return new When.promise(function (resolve, reject) {
             tweetDB.tweetColl.updateMany({_id}, {$inc:{interestValue:value}}, function (err, result) {
                 if(err) return reject(err);
+                if(memcached) memcached.del(MEMCACHED_TWEETID+_id);
                 return resolve();
             });
         });
@@ -209,6 +237,7 @@ exports.modifyLikeValue = function(param){
         return new When.promise(function (resolve, reject) {
             tweetDB.tweetColl.updateMany({_id}, {$inc:{like:value}}, function (err, result) {
                 if(err) return reject(err);
+                if(memcached) memcached.del(MEMCACHED_TWEETID+_id);
                 return resolve();
             });
         });

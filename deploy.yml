@@ -1,6 +1,6 @@
 ---
 - hosts: project2
-  # serial: 1
+#  serial: 1
   become: yes
   become_method: sudo
   vars:
@@ -17,6 +17,13 @@
         WorkingDirectory=/var/node/{{project_name}}/
         Environment=HTTP_PORT=80
         Environment=DB_PATH=mongodb://localhost:{{DB_PORT}}/
+        Environment=PERF_TEST=true
+        Environment=USER_DB_PATH=mongodb://192.168.1.64:27017/
+        Environment=TWEET_DB_PATH=mongodb://192.168.1.67:27017/
+        Environment=LOG_DB_PATH=mongodb://192.168.1.70:27017/
+        Environment=MEDIA_DB_PATH=mongodb://192.168.1.73:27017/
+        Environment=USER_CONN_MEMCACHE=192.168.1.64:11211
+        Environment=TWEET_CONN_MEMCACHE=192.168.1.67:11211
         ExecStart=/usr/bin/node app.js
 
         [Install]
@@ -43,12 +50,12 @@
   - include: install_nodejs.yml
     when: has_nodejs|failed
 
-  - name: check mongodb server
-    shell: dpkg-query -W 'mongodb-org-server'
-    ignore_errors: True
-    register: has_mongodb_server
-  - include: install_mongodb_server.yml
-    when: has_mongodb_server|failed
+#  - name: check mongodb server
+#    shell: dpkg-query -W 'mongodb-org-server'
+#    ignore_errors: True
+#    register: has_mongodb_server
+#  - include: install_mongodb_server.yml
+#    when: has_mongodb_server|failed
   
   - name: create folder for website resources
     file: 

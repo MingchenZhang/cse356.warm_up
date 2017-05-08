@@ -26,11 +26,16 @@ if (Cluster.isMaster) {
     var s = {
         dbPath: (process.env.DB_PATH || 'mongodb://localhost:27017/'),
         dbAuth: {username: process.env.DB_USERNAME || null, password: process.env.DB_PASSWORD || null},
+        userDBPath: process.env.USER_DB_PATH,
+        tweetDBPath: process.env.TWEET_DB_PATH,
+        logDBPath: process.env.LOG_DB_PATH,
+        mediaDBPath: process.env.MEDIA_DB_PATH,
         mongodb: Mongodb,
-        userConn: null,
+        userConnMemcache: process.env.USER_CONN_MEMCACHE,
+        tweetConnMemcache: process.env.TWEET_CONN_MEMCACHE,
         tools: require('./tools').getToolSet(s),
         sendEmail: false,
-        perfTest: !!process.env.PERF_TEST,
+        perfTest: process.env.PERF_TEST == 'true',
     };
 
     var startupPromises = []; // wait for all initialization to finish
@@ -38,8 +43,6 @@ if (Cluster.isMaster) {
     // DB initialization ---------------------------
     s.userConn = require('./database/user_db');
     s.userConn.initDatabase(s, startupPromises);
-    s.convConn = require('./database/eliza_conv');
-    s.convConn.initDatabase(s, startupPromises);
     s.logConn = require('./database/logging');
     s.logConn.initDatabase(s, startupPromises);
     s.tweetConn = require('./database/tweet');
@@ -85,7 +88,7 @@ if (Cluster.isMaster) {
         next();
     });
 
-    // Add user login session lookup
+    // Add user loginDB session lookup
     app.use((req, res, next) => {
         req.userLoginInfo = null;
         res.locals.userLoginInfo = null;

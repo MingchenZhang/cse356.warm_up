@@ -46,7 +46,7 @@ exports.getRoute = function (s) {
             })
             .catch(function (err) {
                 console.error(err);
-                return res.status(200).send({status: 'error', error: err});
+                return res.status(200).send({status: 'error', error: err.message});
             });
     });
 
@@ -64,7 +64,7 @@ exports.getRoute = function (s) {
         promise.then(function (result) {
             return res.status(200).send({status: 'OK', success: 'account verified'});
         }).catch(function (err) {
-            return res.status(200).send(err);
+            return res.status(200).send({status: 'error', error: err.message});
         });
     });
 
@@ -82,45 +82,41 @@ exports.getRoute = function (s) {
         promise.then(function (result) {
             return res.status(200).send({status: 'OK', success: 'account verified'});
         }).catch(function (err) {
-            return res.status(200).send(err);
+            return res.status(200).send({status: 'ERROR', error: err.message});
         });
     });
 
-    router.post('/login', jsonParser, function (req, res, next) {
+    router.post('/loginDB', jsonParser, function (req, res, next) {
         if (!s.tools.isAllString(req.query))
             return res.status(200).send({status: 'ERROR', error: 'format error'});
 
         if(s.perfTest){
             var userLoginTime = process.hrtime();
         }
-        s.userConn.userLogin({username: req.body.username, password: req.body.password})
-            .then(function (session) {
-                res.cookie('login_session', session.sessionToken, {
-                    httpOnly: true,
-                    secure: !!s.inProduction,
-                    expires: (new Date(Date.now() + 180 * 24 * 3600 * 1000))
-                });
-                if(s.perfTest){
-                    userLoginTime = process.hrtime(userLoginTime);
-                    s.logConn.perfLog({type: 'login', userLoginTime, totalTime: process.hrtime(req.startTime)});
-                }
-                return res.status(200).send({status: 'OK', success: 'logged in'});
-            })
-            .catch(function (err) {
-                return res.status(200).send({status: 'error', error: err.message});
+        s.userConn.userLogin({username: req.body.username, password: req.body.password}).then(function (session) {
+            res.cookie('login_session', session.sessionToken, {
+                httpOnly: true,
+                secure: !!s.inProduction,
+                expires: (new Date(Date.now() + 180 * 24 * 3600 * 1000))
             });
+            if (s.perfTest) {
+                userLoginTime = process.hrtime(userLoginTime);
+                s.logConn.perfLog({type: 'loginDB', userLoginTime, totalTime: process.hrtime(req.startTime)});
+            }
+            return res.status(200).send({status: 'OK', success: 'logged in'});
+        }).catch(function (err) {
+            return res.status(200).send({status: 'error', error: err.message});
+        });
     });
 
     router.all('/logout', function (req, res, next) {
         if(!req.userLoginInfo) return res.send({status: 'OK', success: 'logged out'});
-        s.userConn.logoutSession({sessionToken: req.userLoginInfo.sessionToken})
-            .then(function (result) {
-                res.clearCookie('login_session');
-                return res.status(200).send({status: 'OK', success: 'logged out'});
-            })
-            .catch(function (err) {
-                return res.status(200).send(err);
-            });
+        s.userConn.logoutSession({sessionToken: req.userLoginInfo.sessionToken}).then(function (result) {
+            res.clearCookie('login_session');
+            return res.status(200).send({status: 'OK', success: 'logged out'});
+        }).catch(function (err) {
+            return res.status(200).send({status: 'error', error: err.message});
+        });
     });
     router.get('/following', urlParser, function (req, res, next) {
         res.render('following', {username: req.userLoginInfo.info.username});
@@ -137,7 +133,7 @@ exports.getRoute = function (s) {
 
     router.post('/follow', jsonParser, function (req, res, next) {
         if (!req.userLoginInfo)
-            return res.status(401).send({status: 'error', error: 'login first'});
+            return res.status(401).send({status: 'error', error: 'loginDB first'});
         s.userConn.getUserBasicInfoByUsername({username: req.body.username}).then((userInfo)=> {
             if (req.body.follow) {
                 return s.userConn.follow({follower: req.userLoginInfo.userID, followed: userInfo._id});
@@ -147,7 +143,7 @@ exports.getRoute = function (s) {
         }).then(()=> {
             return res.status(200).send({status: 'OK'});
         }).catch((err)=> {
-            return res.status(400).send({status: 'error', error: err});
+            return res.status(400).send({status: 'error', error: err.message});
         });
     });
 
@@ -175,7 +171,7 @@ exports.getRoute = function (s) {
         }).then(()=>{
             res.send({status: 'OK', users: resultList});
         }).catch((err)=>{
-            res.status(400).send({status: 'error', error: err});
+            res.status(400).send({status: 'error', error: err.message});
         });
     });
 
@@ -202,7 +198,7 @@ exports.getRoute = function (s) {
         }).then(()=>{
             res.send({status: 'OK', users: resultList});
         }).catch((err)=>{
-            res.status(400).send({status: 'error', error: err});
+            res.status(400).send({status: 'error', error: err.message});
         });
     });
 
@@ -223,7 +219,7 @@ exports.getRoute = function (s) {
                 user: {email:userInfo.email, followers:followerList.length, following: followedList.length}
             });
         }).catch((err)=>{
-            return res.status(400).send({status: 'error', error: err});
+            return res.status(400).send({status: 'error', error: err.message});
         });
 
     });
