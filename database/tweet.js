@@ -1,4 +1,5 @@
 var When = require('when');
+var Memcached = require('memcached');
 
 var s;
 var tweetDB = {}; // user related collection
