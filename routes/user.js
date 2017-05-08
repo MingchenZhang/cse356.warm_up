@@ -40,6 +40,7 @@ exports.getRoute = function (s) {
             .then(sendValidationEmail)
             .then(function (result) {
                 if(s.perfTest){
+                    createUserTime = process.hrtime(createUserTime);
                     s.logConn.perfLog({type: 'add user', createUserTime, totalTime: process.hrtime(req.startTime)});
                 }
                 return res.status(200).send({status: 'OK', success: 'account created'});

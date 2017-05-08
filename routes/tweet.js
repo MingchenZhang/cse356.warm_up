@@ -132,6 +132,7 @@ exports.getRoute = function (s) {
         if(s.perfTest){
             var searchTime = process.hrtime();
             var userRetrievalTime;
+            var userCacheHit = 0;
         }
         var resultList = [];
         prequeryPromise.then(()=>{
@@ -146,6 +147,7 @@ exports.getRoute = function (s) {
                 let index = i;
                 let tweet = tweetArray[i];
                 let promise = s.userConn.getUserBasicInfo({userID: tweet.postedBy}).then((userInfo)=>{
+                    if(userInfo.cacheHit) userCacheHit++;
                     resultList[index] = {
                         username: userInfo.username,
                         id: tweet._id,
@@ -159,7 +161,7 @@ exports.getRoute = function (s) {
         }).then((result)=>{
             if(s.perfTest){
                 userRetrievalTime = process.hrtime(userRetrievalTime);
-                s.logConn.perfLog({type: 'search', searchCondition, searchTime, userRetrievalTime, totalTime: process.hrtime(req.startTime)});
+                s.logConn.perfLog({type: 'search', searchCondition, searchTime, userRetrievalTime, userCacheHit, totalTime: process.hrtime(req.startTime)});
             }
             return res.status(200).send({status: 'OK', items: resultList});
         }).catch((err)=>{

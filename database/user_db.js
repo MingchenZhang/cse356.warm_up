@@ -389,7 +389,7 @@ exports.getUserBasicInfo = function(param){
         });
     }
 
-    return lookUpCache().then((cache)=>{return cache || getUserBasic()});
+    return lookUpCache().then((cache)=>{if(cache) cache.cacheHit = true; return cache || getUserBasic()});
 };
 
 exports.getUserBasicInfoByUsername = function(param){

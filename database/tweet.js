@@ -82,7 +82,9 @@ exports.initDatabase = function (singleton, readyList) {
 exports.addTweet = function(param){
     var content = param.content;
     var postedBy = s.mongodb.ObjectId(param.postedBy);
-    var parent = s.mongodb.ObjectId(param.parent);
+    var parent;
+    if(param.parent) parent = s.mongodb.ObjectId(param.parent);
+    else parent = null;
     var media = param.media;
 
     var tweetDoc = {
@@ -192,7 +194,7 @@ exports.searchTweet = function(param){
     }
     if(searchText) query.$text = {$search: searchText, $diacriticSensitive: true};
     if(parent) query.parent = s.mongodb.ObjectID(parent);
-    if(replies != undefined && !replies) query.parent = {$exists: false};
+    if(replies != undefined && !replies) query.parent = null;
     resolveFunction = function (resolve, reject) {
         if(param.beforeDate) query.createdAt = {$lte: beforeDate};
         var cursor = tweetDB.tweetColl.find(query);
