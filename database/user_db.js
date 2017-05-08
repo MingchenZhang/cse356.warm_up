@@ -141,9 +141,9 @@ exports.createUser = function(param){
             }, function (err, result) {
                 if (!err) {
                     if(result.upsertedId && result.upsertedId._id){
-                        if(memcached) memcached.replace(MEMCACHED_USERID+result.upsertedId._id, JSON.stringify(userDoc), 3600);
+                        if(memcached) memcached.replace(MEMCACHED_USERID+result.upsertedId._id, JSON.stringify(userDoc), 3600, ()=>{});
                     }
-                    if(memcached) memcached.replace(MEMCACHED_USERNAME+username, JSON.stringify(userDoc), 3600);
+                    if(memcached) memcached.replace(MEMCACHED_USERNAME+username, JSON.stringify(userDoc), 3600, ()=>{});
                     resolve();
                 } else {
                     reject(err);
@@ -263,8 +263,8 @@ exports.userLogin = function (param) {
             userDB.userBasicColl.findOne({username: username}, function (err, result) {
                 if(!err && result !== null) {
                     if(!result.emailVerified) return reject(new Error('email not verified'));
-                    if(memcached) memcached.replace(MEMCACHED_USERID+result._id, JSON.stringify(result), 3600);
-                    if(memcached) memcached.replace(MEMCACHED_USERNAME+result.username, JSON.stringify(result), 3600);
+                    if(memcached) memcached.replace(MEMCACHED_USERID+result._id, JSON.stringify(result), 3600, ()=>{});
+                    if(memcached) memcached.replace(MEMCACHED_USERNAME+result.username, JSON.stringify(result), 3600, ()=>{});
                     return resolve(result);
                 }
                 else return reject(new Error('account not found'));
@@ -296,7 +296,7 @@ exports.userLogin = function (param) {
             };
             loginDB.sessionColl.insertOne(session, function (err, result) {
                 if(err) return reject(err);
-                if(memcached) memcached.replace(MEMCACHED_SESSION+sessionToken, JSON.stringify(session), 3600);
+                if(memcached) memcached.replace(MEMCACHED_SESSION+sessionToken, JSON.stringify(session), 3600, ()=>{});
                 resolve(session);
             });
         });
@@ -348,7 +348,7 @@ exports.getSession = (param) => {
                     reject(new Error('database error'));
                 }
                 if (result !== null) {
-                    if(memcached) memcached.replace(MEMCACHED_SESSION+sessionToken, JSON.stringify(result));
+                    if(memcached) memcached.replace(MEMCACHED_SESSION+sessionToken, JSON.stringify(result), 3600, ()=>{});
                     return resolve(result);
                 }
                 else return reject(new Error('session not found'));
@@ -379,8 +379,8 @@ exports.getUserBasicInfo = function(param){
             userDB.userBasicColl.findOne({_id: userID}, function (err, result) {
                 if(err) return reject(new Error('database error'));
                 if(result !== null) {
-                    if(memcached) memcached.replace(MEMCACHED_USERID+result._id, JSON.stringify(result));
-                    if(memcached) memcached.replace(MEMCACHED_USERNAME+result.username, JSON.stringify(result));
+                    if(memcached) memcached.replace(MEMCACHED_USERID+result._id, JSON.stringify(result), 3600, ()=>{});
+                    if(memcached) memcached.replace(MEMCACHED_USERNAME+result.username, JSON.stringify(result), 3600, ()=>{});
                     return resolve(result);
                 }else{
                     return reject(new Error('account not found'));
@@ -412,8 +412,8 @@ exports.getUserBasicInfoByUsername = function(param){
             userDB.userBasicColl.findOne({username}, function (err, result) {
                 if(err) return reject(new Error('database error'));
                 if(result !== null) {
-                    if(memcached) memcached.replace(MEMCACHED_USERID+result._id, JSON.stringify(result));
-                    if(memcached) memcached.replace(MEMCACHED_USERNAME+result.username, JSON.stringify(result));
+                    if(memcached) memcached.replace(MEMCACHED_USERID+result._id, JSON.stringify(result), 3600, ()=>{});
+                    if(memcached) memcached.replace(MEMCACHED_USERNAME+result.username, JSON.stringify(result), 3600, ()=>{});
                     return resolve(result);
                 }else{
                     return reject(new Error('account not found'));

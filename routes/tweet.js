@@ -147,7 +147,7 @@ exports.getRoute = function (s) {
                 let index = i;
                 let tweet = tweetArray[i];
                 let promise = s.userConn.getUserBasicInfo({userID: tweet.postedBy}).then((userInfo)=>{
-                    if(userInfo.cacheHit) userCacheHit++;
+                    if(s.perfTest) if(userInfo.cacheHit) userCacheHit++;
                     resultList[index] = {
                         username: userInfo.username,
                         id: tweet._id,
