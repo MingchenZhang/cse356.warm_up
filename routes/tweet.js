@@ -72,13 +72,13 @@ exports.getRoute = function (s) {
                 id: tweetDoc._id,
                 username: posterInfo.username,
                 content: tweetDoc.content,
-                timestamp: Math.floor(tweetDoc.createdAt.getTime() / 1000),
+                timestamp: Math.floor((new Date(tweetDoc.createdAt)).getTime() / 1000),
                 parent: tweetDoc.parent,
                 media: tweetDoc.media,
             };
             return res.status(200).send({status: 'OK', item: item});
         }).catch(function (err) {
-            return res.status(500).send({status: 'error', error: err.message});
+            next(err);
         });
     });
 
@@ -152,7 +152,7 @@ exports.getRoute = function (s) {
                         username: userInfo.username,
                         id: tweet._id,
                         content: tweet.content,
-                        timestamp: Math.floor(tweet.createdAt.getTime() / 1000),
+                        timestamp: Math.floor((new Date(tweet.createdAt)).getTime() / 1000),
                     };
                 });
                 userInfoRetrivalPromises.push(promise);
