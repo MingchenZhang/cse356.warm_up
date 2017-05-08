@@ -157,6 +157,10 @@ exports.deleteTweet = function(param){
                 if(doc.media) doc.media.forEach((m)=>{
                     s.tweetConn.getMediaFileBucket().delete(s.mongodb.ObjectID(m));
                 });
+                if(memcached) memcached.del(MEMCACHED_TWEETID+id, (err)=>{if(err) {
+                    console.log('unable to delete tweet from memcached');
+                    console.error(err);
+                }});
                 tweetDB.tweetColl.deleteMany({_id: id}, function (err, result) {
                     if(err) return reject(new Error('database error'));
                     if(result.result.n >= 1) {
@@ -170,7 +174,6 @@ exports.deleteTweet = function(param){
     }
 
     return deleteTweetDoc().then((result)=>{
-        if(memcached) memcached.del(MEMCACHED_TWEETID+id);
         return result;
     });
 };
