@@ -86,7 +86,7 @@ exports.getRoute = function (s) {
         });
     });
 
-    router.post('/loginDB', jsonParser, function (req, res, next) {
+    router.post('/login', jsonParser, function (req, res, next) {
         if (!s.tools.isAllString(req.query))
             return res.status(200).send({status: 'ERROR', error: 'format error'});
 
