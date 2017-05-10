@@ -51,5 +51,8 @@ exports.logRequest = function(request){
 };
 
 exports.perfLog = function (info) {
-    return loggingDB.perfLofColl.insertOne(Object.assign(info, {time: new Date()}));
+    if(info.totalTime && info.totalTime[0] >= 1)
+        return loggingDB.perfLofColl.insertOne(Object.assign(info, {time: new Date()}));
+    else
+        return When.resolve();
 };
