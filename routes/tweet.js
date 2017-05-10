@@ -39,6 +39,10 @@ exports.getRoute = function (s) {
                         s.logConn.perfLog({type: 'add tweet', addTweetTime, addInterestTime, totalTime: process.hrtime(req.startTime)});
                     }
                 });
+            else{
+                addInterestTime = process.hrtime(addInterestTime);
+                s.logConn.perfLog({type: 'add tweet', addTweetTime, totalTime: process.hrtime(req.startTime)});
+            }
             return res.status(200).send({status: 'OK', success: 'post created', id: result.insertedID});
         }).catch(function (err) {
             return res.status(500).send({status: 'error', error: err.message});
