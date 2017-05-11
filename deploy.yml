@@ -21,9 +21,10 @@
         Environment=USER_DB_PATH=mongodb://192.168.1.64:27017/
         Environment=TWEET_DB_PATH=mongodb://localhost:27017/
         Environment=LOG_DB_PATH=mongodb://192.168.1.70:27017/
-        Environment=MEDIA_DB_PATH=mongodb://localhost:27017/
+        Environment=MEDIA_DB_PATH=mongodb://192.168.1.130:27017/
         Environment=USER_CONN_MEMCACHE=192.168.1.64:11211
         Environment=TWEET_CONN_MEMCACHE=192.168.1.67:11211
+        Environment=SKIP_ADD_TWEET_WAIT=true
         ExecStart=/usr/bin/node app.js
 
         [Install]
@@ -62,7 +63,7 @@
     ignore_errors: True
 
   - name: start config mongos instance
-    shell: nohup mongos --configdb shardConfig/192.168.1.99:4001 &
+    shell: nohup mongos --configdb shardConfig/192.168.1.111:4001 &
     async: 10
     poll: 0
   

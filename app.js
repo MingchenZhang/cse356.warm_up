@@ -36,6 +36,7 @@ if (Cluster.isMaster) {
         tools: require('./tools').getToolSet(s),
         sendEmail: false,
         perfTest: process.env.PERF_TEST == 'true',
+        skipAddTweetWait: process.env.SKIP_ADD_TWEET_WAIT == 'true',
     };
 
     var startupPromises = []; // wait for all initialization to finish

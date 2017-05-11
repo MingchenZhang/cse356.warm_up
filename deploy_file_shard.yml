@@ -1,0 +1,54 @@
+---
+- hosts: file_shard_secondary
+#  serial: 1
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  pre_tasks:
+  - name: install python2
+    raw: sudo apt-get update && sudo apt-get -y install python-simplejson
+
+  - name: write init script to disable transparent hugepages
+    get_url:
+      url: https://dl2.pushbulletusercontent.com/go0c6bDOmSsgdAXcd6WZ9l67Hx3YyVel/disable-transparent-hugepages
+      dest: /etc/init.d/disable-transparent-hugepages
+      mode: 0755
+      force: yes
+
+  - name: make transparent hugepages script executable
+    shell: chmod 755 /etc/init.d/disable-transparent-hugepages && update-rc.d disable-transparent-hugepages defaults
+
+  tasks:
+  - name: create folder for shard
+    file:
+      path: /var/mongodb/db
+      state: directory
+      recurse: yes
+
+  - name: check mongodb server
+    shell: dpkg-query -W 'mongodb-org'
+    ignore_errors: True
+    register: has_mongodb_server
+  - include: install_mongodb_server.yml
+    when: has_mongodb_server|failed
+
+  - name: reboot server
+    command: reboot
+    ignore_errors: True
+    async: 0
+    poll: 0
+  - name: wait for reboot
+    local_action: wait_for host={{ ansible_ssh_host }} port=22 state=started delay=1 timeout=300
+  - name: pause 15 seconds
+    pause:
+      seconds: 15
+
+  - name: stop privious mongod instance
+    command: pkill mongod -e
+    ignore_errors: True
+
+  - name: start mongod instance as a shard
+    shell: nohup mongod --shardsvr --bind_ip 0.0.0.0 --dbpath /var/mongodb/db &
+    async: 10
+    poll: 0
+

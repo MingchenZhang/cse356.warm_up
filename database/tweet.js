@@ -86,8 +86,10 @@ exports.addTweet = function(param){
     if(param.parent) parent = s.mongodb.ObjectId(param.parent);
     else parent = null;
     var media = param.media;
+    var _id = param._id;
 
     var tweetDoc = {
+        _id,
         createdAt: new Date(),
         content,
         postedBy,

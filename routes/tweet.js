@@ -22,6 +22,17 @@ exports.getRoute = function (s) {
             var addTweetTime = process.hrtime();
             var addInterestTime;
         }
+        if(s.skipAddTweetWait){
+            var _id = s.mongodb.ObjectID();
+            s.tweetConn.addTweet({
+                content: req.body.content,
+                postedBy: req.userLoginInfo.userID,
+                parent: req.body.parent,
+                media: req.body.media,
+                _id,
+            });
+            return res.status(200).send({status: 'OK', success: 'post created', id: _id.toString()});
+        }
         s.tweetConn.addTweet({
             content: req.body.content,
             postedBy: req.userLoginInfo.userID,
