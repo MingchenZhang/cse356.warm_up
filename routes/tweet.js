@@ -33,7 +33,7 @@ exports.getRoute = function (s) {
             _id,
         };
 
-        if(s.listCache) s.listCache.add((tweetDoc));
+        if(s.listCache) s.listCache.add(JSON.stringify(tweetDoc));
         if(s.skipAddTweetWait){
             s.tweetConn.addTweet(tweetDoc);
             return res.status(200).send({status: 'OK', success: 'post created', id: _id.toString()});
@@ -126,7 +126,7 @@ exports.getRoute = function (s) {
         searchCondition.limitDoc = req.body.limit;
         searchCondition.parent = req.body.parent;
         searchCondition.replies = req.body.replies;
-        searchCondition.sortByInterest = req.body.rank!='time';
+        searchCondition.sortByInterest = req.body.rank!='time'; // true: sortByInterest, false: sortByCreatedAt
 
         var prequeryPromise = When.resolve();
         if(req.body.following === false && typeof req.body.username != 'string'){
@@ -156,9 +156,9 @@ exports.getRoute = function (s) {
                 !searchCondition.sortByInterest){
                 return new Promise((resolve, reject)=>{
                     s.listCache.get(searchCondition.limitDoc || 25, (tweetArray)=>{
-                        // for(let i=0; i<tweetArray.length; i++){
-                        //     tweetArray[i] = JSON.parse(tweetArray[i]);
-                        // }
+                        for(let i=0; i<tweetArray.length; i++){
+                            tweetArray[i] = JSON.parse(tweetArray[i]);
+                        }
                         resolve(tweetArray);
                     });
                 });
@@ -170,16 +170,22 @@ exports.getRoute = function (s) {
                 userRetrievalTime = process.hrtime();
             }
             var userInfoRetrivalPromises = [];
+            var previousTimestamp = Number.MAX_SAFE_INTEGER;
             for(let i=0; i<tweetArray.length; i++) {
                 let index = i;
                 let tweet = tweetArray[i];
                 let promise = s.userConn.getUserBasicInfo({userID: tweet.postedBy}).then((userInfo)=>{
                     if(s.perfTest) if(userInfo.cacheHit) userCacheHit++;
+                    var timestamp = Math.floor((new Date(tweet.createdAt)).getTime() / 1000);
+                    if(!searchCondition.sortByInterest && (timestamp>previousTimestamp))
+                        timestamp = previousTimestamp;
+                    else
+                        previousTimestamp = timestamp;
                     resultList[index] = {
                         username: userInfo.username,
                         id: tweet._id,
                         content: tweet.content,
-                        timestamp: Math.floor((new Date(tweet.createdAt)).getTime() / 1000),
+                        timestamp: timestamp,
                     };
                 });
                 userInfoRetrivalPromises.push(promise);
