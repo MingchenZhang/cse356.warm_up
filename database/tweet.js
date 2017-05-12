@@ -87,10 +87,11 @@ exports.addTweet = function(param){
     else parent = null;
     var media = param.media;
     var _id = param._id;
+    var createdAt = param.createdAt || new Date();
 
     var tweetDoc = {
         _id,
-        createdAt: new Date(),
+        createdAt,
         content,
         postedBy,
         parent,

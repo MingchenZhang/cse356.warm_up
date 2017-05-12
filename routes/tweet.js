@@ -29,6 +29,7 @@ exports.getRoute = function (s) {
             postedBy: req.userLoginInfo.userID,
             parent: req.body.parent,
             media: req.body.media,
+            createdAt: new Date(),
             _id,
         };
 
