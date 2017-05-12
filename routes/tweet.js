@@ -155,7 +155,7 @@ exports.getRoute = function (s) {
                 !searchCondition.sortByInterest){
                 return new Promise((resolve, reject)=>{
                     s.listCache.get(searchCondition.limitDoc || 25, (tweetArray)=>{
-                        resolve(tweetArray);
+                        resolve(JSON.parse(tweetArray));
                     });
                 });
             }
