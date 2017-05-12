@@ -150,9 +150,11 @@ exports.getRoute = function (s) {
         }
         var resultList = [];
         prequeryPromise.then(()=>{
-            if(searchCondition.parent == null && searchCondition.replies && !searchCondition.sortByInterest){
+            if(searchCondition.parent == null &&
+                searchCondition.replies &&
+                !searchCondition.sortByInterest){
                 return new Promise((resolve, reject)=>{
-                    s.listCache.get(searchCondition.limitDoc, (tweetArray)=>{
+                    s.listCache.get(searchCondition.limitDoc || 25, (tweetArray)=>{
                         resolve(tweetArray);
                     });
                 });
