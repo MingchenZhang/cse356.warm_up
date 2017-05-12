@@ -33,7 +33,7 @@ exports.getRoute = function (s) {
             _id,
         };
 
-        if(s.listCache) s.listCache.add(JSON.stringify(tweetDoc));
+        if(s.listCache) s.listCache.add((tweetDoc));
         if(s.skipAddTweetWait){
             s.tweetConn.addTweet(tweetDoc);
             return res.status(200).send({status: 'OK', success: 'post created', id: _id.toString()});
@@ -156,9 +156,9 @@ exports.getRoute = function (s) {
                 !searchCondition.sortByInterest){
                 return new Promise((resolve, reject)=>{
                     s.listCache.get(searchCondition.limitDoc || 25, (tweetArray)=>{
-                        for(let i=0; i<tweetArray.length; i++){
-                            tweetArray[i] = JSON.parse(tweetArray[i]);
-                        }
+                        // for(let i=0; i<tweetArray.length; i++){
+                        //     tweetArray[i] = JSON.parse(tweetArray[i]);
+                        // }
                         resolve(tweetArray);
                     });
                 });
