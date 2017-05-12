@@ -39,6 +39,7 @@ if (Cluster.isMaster) {
         perfTest: process.env.PERF_TEST == 'true',
         skipAddTweetWait: process.env.SKIP_ADD_TWEET_WAIT == 'true',
         listCache: process.env.LIST_CACHE,
+        listCachePort: parseInt(process.env.LIST_CACHE_PORT),
     };
 
     var startupPromises = []; // wait for all initialization to finish
@@ -60,7 +61,7 @@ if (Cluster.isMaster) {
     });
 
     if(s.listCache){
-        var dnode = Dnode.connect(s.listCache);
+        var dnode = Dnode.connect(s.listCache, s.listCachePort);
         startupPromises.push(new Promise((resolve, reject)=>{
             dnode.on('remote', (remote)=>{
                 s.listCache = remote;

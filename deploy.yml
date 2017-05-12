@@ -25,7 +25,8 @@
         Environment=USER_CONN_MEMCACHE=192.168.1.64:11211
         Environment=TWEET_CONN_MEMCACHE=192.168.1.67:11211
         Environment=SKIP_ADD_TWEET_WAIT=true
-        Environment=LIST_CACHE=192.168.1.22:5004
+        Environment=LIST_CACHE=192.168.1.22
+        Environment=LIST_CACHE_PORT=5004
         ExecStart=/usr/bin/node app.js
 
         [Install]

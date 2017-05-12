@@ -13,6 +13,7 @@ var server = Dnode({
     add: (elem, res)=>{
         list[nextIndex] = elem;
         if(nextIndex == CACHE_SIZE) nextIndex = 0;
+        if(process.env.LOG) console.log('item received: '+JSON.stringify(elem));
         res();
     },
     get: (size, res)=>{
@@ -22,12 +23,14 @@ var server = Dnode({
             if(list[i] = null) return res(result);
             result.push(list[i]);
         }
+        if(process.env.LOG) console.log('item returned: ' + result.length);
         return res(result);
     },
     clear: ()=>{
         for(let i=0; i<CACHE_SIZE; i++){
             list[i] = null;
         }
+        if(process.env.LOG) console.log('list cleared');
         nextIndex = 0;
     }
 });
