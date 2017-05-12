@@ -7,6 +7,7 @@ var When = require('when');
 var Ejs = require('ejs');
 var NodeMailer = require('nodemailer');
 var BodyParser = require('body-parser');
+var Dnode = require('dnode');
 
 if (Cluster.isMaster) {
     var numWorkers = process.env.WORKERS || 1;
@@ -37,6 +38,7 @@ if (Cluster.isMaster) {
         sendEmail: false,
         perfTest: process.env.PERF_TEST == 'true',
         skipAddTweetWait: process.env.SKIP_ADD_TWEET_WAIT == 'true',
+        listCache: process.env.LIST_CACHE,
     };
 
     var startupPromises = []; // wait for all initialization to finish
@@ -56,6 +58,18 @@ if (Cluster.isMaster) {
             pass: 'QeoZn3oLzDbW7BchZgqenW3zACdn'
         }
     });
+
+    if(s.listCache){
+        var dnode = Dnode.connect(s.listCache);
+        startupPromises.push(new Promise((resolve, reject)=>{
+            dnode.on('remote', (remote)=>{
+                s.listCache = remote;
+                remote.clear();
+                resolve();
+            });
+            dnode.on('fail', ()=>reject());
+        }));
+    }
 
     // web server initialization
     var app = Express();

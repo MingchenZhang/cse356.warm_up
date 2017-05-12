@@ -25,6 +25,7 @@
         Environment=USER_CONN_MEMCACHE=192.168.1.64:11211
         Environment=TWEET_CONN_MEMCACHE=192.168.1.67:11211
         Environment=SKIP_ADD_TWEET_WAIT=true
+        Environment=LIST_CACHE=192.168.1.22:5004
         ExecStart=/usr/bin/node app.js
 
         [Install]
@@ -43,6 +44,11 @@
   - name: ensure systemd is installed
     apt:
       name: systemd
+
+  - name: install nodejs
+    apt:
+      name: build-essential
+      update_cache: yes
 
   - name: check nodejs
     shell: dpkg-query -W 'nodejs'
@@ -84,7 +90,11 @@
     file:
       path: /var/mongodb/{{project_name}}
       state: directory
-  
+
+  - name: Install packages based on package.json.
+    npm:
+      path: /var/node/{{project_name}}/
+
   - name: write systemd config to auto run nodejs
     copy:
       content: "{{ systemd_config_nodejs }}"

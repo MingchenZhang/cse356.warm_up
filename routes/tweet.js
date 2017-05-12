@@ -22,23 +22,22 @@ exports.getRoute = function (s) {
             var addTweetTime = process.hrtime();
             var addInterestTime;
         }
-        if(s.skipAddTweetWait){
-            var _id = s.mongodb.ObjectID();
-            s.tweetConn.addTweet({
-                content: req.body.content,
-                postedBy: req.userLoginInfo.userID,
-                parent: req.body.parent,
-                media: req.body.media,
-                _id,
-            });
-            return res.status(200).send({status: 'OK', success: 'post created', id: _id.toString()});
-        }
-        s.tweetConn.addTweet({
+
+        var _id = s.mongodb.ObjectID();
+        var tweetDoc = {
             content: req.body.content,
             postedBy: req.userLoginInfo.userID,
             parent: req.body.parent,
-            media: req.body.media
-        }).then(function (result) {
+            media: req.body.media,
+            _id,
+        };
+
+        if(s.listCache) s.listCache.add(tweetDoc);
+        if(s.skipAddTweetWait){
+            s.tweetConn.addTweet(tweetDoc);
+            return res.status(200).send({status: 'OK', success: 'post created', id: _id.toString()});
+        }
+        s.tweetConn.addTweet(tweetDoc).then(function (result) {
             if(s.perfTest){
                 addTweetTime = process.hrtime(addTweetTime);
                 addInterestTime = process.hrtime();
@@ -151,6 +150,13 @@ exports.getRoute = function (s) {
         }
         var resultList = [];
         prequeryPromise.then(()=>{
+            if(searchCondition.parent == null && searchCondition.replies && !searchCondition.sortByInterest){
+                return new Promise((resolve, reject)=>{
+                    s.listCache.get(searchCondition.limitDoc, (tweetArray)=>{
+                        resolve(tweetArray);
+                    });
+                });
+            }
             return s.tweetConn.searchTweet(searchCondition);
         }).then((tweetArray)=>{
             if(s.perfTest){

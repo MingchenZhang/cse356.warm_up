@@ -11,6 +11,7 @@
     "colors": "^1.1.2",
     "cookie-parser": "^1.4.3",
     "crypto-js": "^3.1.9-1",
+    "dnode": "^1.2.2",
     "ejs": "latest",
     "express": "^4.14.0",
     "helmet": "^3.3.0",
