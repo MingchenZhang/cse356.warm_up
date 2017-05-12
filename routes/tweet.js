@@ -32,7 +32,7 @@ exports.getRoute = function (s) {
             _id,
         };
 
-        if(s.listCache) s.listCache.add(tweetDoc);
+        if(s.listCache) s.listCache.add(JSON.stringify(tweetDoc));
         if(s.skipAddTweetWait){
             s.tweetConn.addTweet(tweetDoc);
             return res.status(200).send({status: 'OK', success: 'post created', id: _id.toString()});

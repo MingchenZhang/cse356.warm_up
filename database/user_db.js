@@ -360,7 +360,7 @@ exports.getSession = (param) => {
 };
 
 exports.getUserBasicInfo = function(param){
-    var userID = param.userID;
+    var userID = s.mongodb.ObjectID(param.userID);
 
     function lookUpCache(){
         if(!memcached) return When.resolve(null);

@@ -20,7 +20,7 @@ var server = Dnode({
         var result = [];
         var counter = 0;
         for(let i=(nextIndex-1)%CACHE_SIZE; counter<size; i = (i-1) % CACHE_SIZE, counter++){
-            if(list[i] = null) return res(result);
+            if(list[i] == null) return res(result);
             result.push(list[i]);
         }
         if(process.env.LOG) console.log('item returned: ' + result.length);
