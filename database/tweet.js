@@ -107,7 +107,7 @@ exports.addTweet = function(param){
                 if (!err) {
                     resolve(result);
                 } else {
-                    reject(new Error('database error'));
+                    reject(err);
                 }
             });
         });
