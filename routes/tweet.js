@@ -56,6 +56,7 @@ exports.getRoute = function (s) {
             }
             return res.status(200).send({status: 'OK', success: 'post created', id: result.insertedID});
         }).catch(function (err) {
+            console.error(err);
             return res.status(500).send({status: 'error', error: err.message});
         });
     });
@@ -93,6 +94,7 @@ exports.getRoute = function (s) {
             };
             return res.status(200).send({status: 'OK', item: item});
         }).catch(function (err) {
+            console.error(err);
             return res.status(400).send({status: 'error', error: err.message});
         });
     });
@@ -115,6 +117,7 @@ exports.getRoute = function (s) {
                 return res.status(400).send({status: 'error', error: err ? err : 'unknown error'});
             });
         }).catch(function (err) {
+            console.error(err);
             return res.status(400).send({status: 'error', error: err.message});
         });
     });
@@ -198,6 +201,7 @@ exports.getRoute = function (s) {
             }
             return res.status(200).send({status: 'OK', items: resultList});
         }).catch((err)=>{
+            console.error(err);
             return res.status(400).send({status: 'error', error: err.message});
         });
     });
