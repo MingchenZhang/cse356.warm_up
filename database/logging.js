@@ -52,7 +52,7 @@ exports.logRequest = function(request){
 
 exports.perfLog = function (info) {
     if(info.totalTime && info.totalTime[0] >= 1)
-        return loggingDB.perfLofColl.insertOne(Object.assign(info, {time: new Date()}));
+        return loggingDB.perfLofColl.insertOne(Object.assign(info, {time: new Date()})).catch((err)=>{console.error(err);});
     else
         return When.resolve();
 };
