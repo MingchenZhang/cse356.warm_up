@@ -35,7 +35,7 @@ exports.getRoute = function (s) {
 
         if(s.listCache) s.listCache.add(JSON.stringify(tweetDoc));
         if(s.skipAddTweetWait){
-            s.tweetConn.addTweet(tweetDoc);
+            s.tweetConn.addTweet(tweetDoc).catch((err)=>{console.error(err);});
             return res.status(200).send({status: 'OK', success: 'post created', id: _id.toString()});
         }
         s.tweetConn.addTweet(tweetDoc).then(function (result) {
